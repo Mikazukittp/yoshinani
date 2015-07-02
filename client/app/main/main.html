@@ -1,0 +1,62 @@
+<div ng-include="'components/navbar/navbar.html'"></div>
+
+<header class="hero-unit" id="banner">
+  <div class="container">
+    <form class="payment-form" name="paymentForm" novalidate>
+
+      <h1 class="page-header">精算項目を入力</h1>
+      <div class="row">
+        <div class="col-sm-6">
+          <p class="form-group">
+            <input type="number" class="form-control" name="amount" placeholder="値段" ng-model="newPaidAmount" ng-pattern="/^[1-9][0-9]*$/" ng-required="true">
+            <p class="form-error error-message" ng-show="paymentForm.amount.$error.required && paymentForm.amount.$dirty">立て替えた金額は必須です。</p>
+          </p>
+          <p class="form-group">
+            <input type="text" class="form-control" name="description" placeholder="内容" ng-model="newPaidDescription" ng-required="true">
+            <p class="form-error error-message" ng-show="paymentForm.description.$error.required && paymentForm.description.$dirty">立替の内容を記入してください。（例: カラオケ代）</p>
+          </p>
+
+          <div class="row">
+            <div class="col-sm-6"><p class="form-group">
+              <input type="date" class="form-control" name="date" placeholder="日付" ng-model="newPaidDate" ng-required="true">
+              <p class="form-error error-message" ng-show="paymentForm.date.$error.required && paymentForm.date.$dirty">立て替えた日付は必須です。</p>
+            </p></div>
+            <div class="col-sm-6"><p class="form-group">
+              <input type="text" class="form-control" name="event" placeholder="イベント名" ng-model="newPaidEvent" ng-required="true">
+              <p class="form-error error-message" ng-show="paymentForm.event.$error.required && paymentForm.event.$dirty">立替があったイベント名は必須です。（例: 新年会）</p>
+
+            </p></div>
+          </div>
+        </div>
+
+        <div class="col-sm-6">
+          <span class="lead">参加者 {{newPaidParticipants.length}}人</span>
+          <p>自分も含めて、立替の支払い対象にチェックしてください。</p>
+          <div class="form-group">
+            <div class="checkbox-inline col-lg-3 col-md-3 col-sm-4" ng-repeat="u in usersInGroup">
+              <input type="checkbox" id="{{u._id}}" value="{{u._id}}" ng-checked="newPaidParticipants.indexOf(u._id) > -1" ng-click="toggleCheck(u._id)">
+              <label for="{{u._id}}" class="">{{u.name}}</label>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <span class="form-group">
+        <button type="submit" class="btn btn-primary btn-lg btn-block" ng-click="addPayment()" ng-disabled="paymentForm.$invalid||newPaidParticipants.length==0">追加</button>
+      </span>
+
+    </form>
+  </div>
+</header>
+
+<div class="container">
+  <h1 class="page-header">Recents:</h1>
+  <payment-card-list>
+  <div ng-repeat="p in payments | orderBy: '-_id' | orderBy: '-date' | limitTo: 6" ng-show="!p.isDelete">
+    <payment-card item="p" />
+  </div>
+</payment-card-list>
+</div>
+
+<div ng-include="'components/footer/footer.html'"></div>

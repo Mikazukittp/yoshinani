@@ -1,0 +1,56 @@
+<div ng-include="'components/navbar/navbar.html'"></div>
+
+<header class="hero-unit login-hero" id="banner">
+  <div class="container">
+    <div class="col-md-7 col-lg-7 col-sm-6 text-center">
+      <h1>精算<span class="xs-small">しようぜ！</span></h1>
+      <p class="lead">精算するためのサービスです。</p>
+      <img class="coin" src="assets/images/coin.png" width="60" alt="coin">
+      <img class="coin" src="assets/images/coin.png" width="60" alt="coin">
+      <img class="coin" src="assets/images/coin.png" width="60" alt="coin">
+    </div>
+    <div class="jumbotron col-md-5 col-lg-5 col-sm-6">
+      <form class="form" name="form" ng-submit="login(form)" novalidate>
+
+        <div class="form-group">
+          <label>メールアドレス</label>
+
+          <input type="email" name="email" class="form-control" ng-model="user.email" required>
+        </div>
+
+        <div class="form-group">
+          <label>パスワード</label>
+
+          <input type="password" name="password" class="form-control" ng-model="user.password" required>
+        </div>
+
+        <div class="form-group has-error">
+          <p class="help-block" ng-show="form.email.$error.required && form.password.$error.required && submitted">
+             メールアドレスとパスワードを入力してください。
+          </p>
+          <p class="help-block" ng-show="form.email.$error.email && submitted">
+             メールアドレスを入力してください。
+          </p>
+
+          <p class="help-block">{{ errors.other }}</p>
+        </div>
+
+        <div>
+          <button class="btn btn-inverse btn-lg btn-login" type="submit">
+            ログイン
+          </button>
+          <a class="signup" href="/signup">
+            新規登録
+          </a>
+        </div>
+
+      </form>
+    </div>
+
+  </div>
+</header>
+
+<div class="container">
+</div>
+
+<div ng-include="'components/footer/footer.html'"></div>

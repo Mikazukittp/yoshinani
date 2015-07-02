@@ -1,0 +1,33 @@
+<li class="col-md-4 col-lg-4 col-sm-6">
+  <a href="#" class="card">
+    <span class="paidUser">{{p.paidUser.name}}</span>
+    <span class="amount">{{p.amount| currency:"¥":0}}</span>
+    <span class="date">{{p.date | date:"yyyy/MM/dd"}}</span>
+    <span class="event">{{p.event}}</span>
+    <span class="description">{{p.description}}</span>
+    <ul class="participants" >
+      <li ng-repeat="pp in p.participants | limitTo:3">{{pp.name}}</li>
+      <li class="other" ng-if="p.participants.length > 3">
+        他{{p.participants.length - 3}}人
+        <span class="tooltip">
+          <p ng-repeat="pp in p.participants">{{pp.name}}</p>
+        </span>
+      </li>
+    </ul>
+    <button type="button" class="glyphicon glyphicon-trash close" ng-click="delete(p)"></button>
+  </a>
+</li>
+
+<script type="text/ng-template" id="deleteModal.html">
+  <div class="modal-header">
+      <h3 class="modal-title">立替を削除</h3>
+  </div>
+  <div class="modal-body">
+  この立替を削除していいですか？<br>
+  <small>この操作は取り消すことができません。</small>
+  </div>
+  <div class="modal-footer">
+      <button class="btn btn-primary" ng-click="ok()">OK</button>
+      <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+  </div>
+</script>
