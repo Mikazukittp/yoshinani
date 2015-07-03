@@ -62,6 +62,21 @@ exports.create = function(req, res) {
   });
 };
 
+// 精算情報を追加
+exports.adjust = function(req, res) {
+  req.body.description = '精算';
+
+  payment.create(req.body, function(err, payment) {
+    // もし精算の対象者が1名以外だったらエラーにする
+    if(req.body.participantsIds.length != 1 || req.body.participants.length != 1) {
+      err = { message: '精算の参加者の数が不正です' };
+    }
+
+    if(err) { return handleError(res, err); }
+    return res.json(201, payment);
+  });
+};
+
 // Updates an existing payment in the DB.
 exports.update = function(req, res) {
   if(req.body._id) { delete req.body._id; }
