@@ -7,6 +7,7 @@
  * DELETE  /payments/:id          ->  destroy
  */
 
+//sarashiyaコメント
  'use strict';
 
  var _ = require('lodash');
