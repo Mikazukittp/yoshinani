@@ -89,6 +89,21 @@ exports.destroy = function(req, res) {
   });
 };
 
+// 精算情報を追加
+exports.adjust = function(req, res) {
+  req.body.description = '精算';
+
+  // もし精算の対象者が1名以外だったらエラーにする
+  if(req.body.participantsIds.length != 1 || req.body.participants.length != 1) {
+    return handleError(res, { message: '精算の参加者の数が不正です' });
+  }
+
+  payment.create(req.body, function(err, payment) {
+    if(err) { return handleError(res, err); }
+    return res.json(201, payment);
+  });
+};
+
 // Get amount how much specific user have to pay
 exports.overview = function(req, res) {
   payment.find({isDelete: false}, function (err, payments) {
