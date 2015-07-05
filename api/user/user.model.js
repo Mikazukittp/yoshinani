@@ -18,8 +18,8 @@ var UserSchema = new Schema({
   updatedAt: Date,
   deletedAt: Date,
   isDelete: Boolean,
-//  currentHaveToPay: {type: Number, min: 0},
-//  currentAllPay:{type: Number,min: 0}
+  currentHaveToPay: {type: Number, min: 0},
+  currentAllPay:{type: Number,min: 0}
 });
 
 /**
