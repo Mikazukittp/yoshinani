@@ -9,6 +9,22 @@ var validationError = function(res, err) {
   return res.json(422, err);
 };
 
+
+
+/** TEST TEST
+ * GET User Name
+ */
+exports.testUserName = function(req, res, next){
+  var userId = req.params.id;
+  User.findById(userId, function (err, user) {
+    if (err) return next(err);
+    if (!user) return res.send(401);
+    var hoge = user.TestUserName;
+    res.json(hoge);
+  });
+};
+
+
 /**
  * Get list of users
  * restriction: 'admin'

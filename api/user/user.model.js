@@ -17,8 +17,34 @@ var UserSchema = new Schema({
   createdAt: Date,
   updatedAt: Date,
   deletedAt: Date,
-  isDelete: Boolean
+  isDelete: Boolean,
+//  currentHaveToPay: {type: Number, min: 0},
+//  currentAllPay:{type: Number,min: 0}
 });
+
+/**
+ * TestUserName
+ */
+ UserSchema
+ .virtual('TestUserName')
+ .get(function(){
+  return{
+    'name': this.name
+  };
+ });
+
+/**
+ *IDを指定したら、CurrentHaveToPayと、currentAllPayをとってくるメソッド
+
+ 
+ UserSchema
+ .virtual('latestHaveToPay')
+ .get(function() {
+  return {
+    'latestHaveToPay': this.name,
+    'role': this.role
+  };
+ });
 
 /**
  * Virtuals

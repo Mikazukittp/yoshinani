@@ -8,5 +8,5 @@ module.exports = {
     uri: 'mongodb://localhost/seisan-dev'
   },
 
-  seedDB: false
+  seedDB: true
 };
