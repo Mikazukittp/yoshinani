@@ -54,21 +54,20 @@ exports.show = function(req, res) {
   });
 };
 
-
 // Creates a new payment in the DB.
 exports.create = function(req, res) {
-  payment.create(req.body, function(err, p) {
+  payment.create(req.body, function(err, payment) {
     if(err) { return handleError(res, err); }
 
     //currentHaveToPay（現在支払わなきゃいけない総額に今回払うべき額を参加者全員に追加）
     //この処理を繰り返したい
-    user.findById(p.paidUserId, function (err, u) {
-      u.currentHaveToPay += p.amount / p.participantsIds.length;
+    user.findById(payment.paidUserId, function (err, u) {
+      u.currentHaveToPay += payment.amount / payment.participantsIds.length;
     });
 
     //currentPaid（現在の総立替額に今回立て替えた分を追加）
-    user.findById(p.paidUserId, function (err, u) {
-      u.currentPaid += p.amount;
+    user.findById(payment.paidUserId, function (err, u) {
+      u.currentPaid += payment.amount;
     });
 
   //currentHaveToPayとcurrentPaidをUsersコレクションでupdateする処理
