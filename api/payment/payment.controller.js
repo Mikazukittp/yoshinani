@@ -44,18 +44,6 @@ exports.index = function(req, res) {
   });
 
 };
-// テスト用メソッド
-exports.test = function(req, res) {
-  payment.findOne({paidUserId: req.params.id}, {}, {}, function (err, payment) {
-    if(err) { return handleError(res, err); }
-    user.findOne({}, '-salt -hashedPassword', function(err, u){
-      u.name = "tokunaga";
-          return res.json(200, {
-            'name' : u.name
-          });
-    });
-  });
-};
 
 // Get a single payment
 exports.show = function(req, res) {
