@@ -7,7 +7,6 @@
  * DELETE  /payments/:id          ->  destroy
  */
 
-//sarashiyaコメント
  'use strict';
 
  var _ = require('lodash');
@@ -45,6 +44,18 @@ exports.index = function(req, res) {
   });
 
 };
+// テスト用メソッド
+exports.test = function(req, res) {
+  payment.findOne({paidUserId: req.params.id}, {}, {}, function (err, payment) {
+    if(err) { return handleError(res, err); }
+    user.findOne({}, '-salt -hashedPassword', function(err, u){
+      u.name = "tokunaga";
+          return res.json(200, {
+            'name' : u.name
+          });
+    });
+  });
+};
 
 // Get a single payment
 exports.show = function(req, res) {
@@ -55,10 +66,25 @@ exports.show = function(req, res) {
   });
 };
 
+
 // Creates a new payment in the DB.
 exports.create = function(req, res) {
-  payment.create(req.body, function(err, payment) {
+  payment.create(req.body, function(err, p) {
     if(err) { return handleError(res, err); }
+
+    //currentHaveToPay（現在支払わなきゃいけない総額に今回払うべき額を参加者全員に追加）
+    //この処理を繰り返したい
+    user.findById(p.paidUserId, function (err, u) {
+      u.currentHaveToPay += p.amount / p.participantsIds.length;
+    });
+
+    //currentPaid（現在の総立替額に今回立て替えた分を追加）
+    user.findById(p.paidUserId, function (err, u) {
+      u.currentPaid += p.amount;
+    });
+
+  //currentHaveToPayとcurrentPaidをUsersコレクションでupdateする処理
+
     return res.json(201, payment);
   });
 };
