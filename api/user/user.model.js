@@ -14,6 +14,8 @@ var UserSchema = new Schema({
   hashedPassword: String,
   provider: String,
   salt: String,
+  currentHaveToPay: String,
+  currentPaid: String,
   createdAt: Date,
   updatedAt: Date,
   deletedAt: Date,

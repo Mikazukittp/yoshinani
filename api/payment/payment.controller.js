@@ -7,7 +7,6 @@
  * DELETE  /payments/:id          ->  destroy
  */
 
-//sarashiyaコメント
  'use strict';
 
  var _ = require('lodash');
@@ -59,6 +58,20 @@ exports.show = function(req, res) {
 exports.create = function(req, res) {
   payment.create(req.body, function(err, payment) {
     if(err) { return handleError(res, err); }
+
+    //currentHaveToPay（現在支払わなきゃいけない総額に今回払うべき額を参加者全員に追加）
+    //この処理を繰り返したい
+    user.findById(payment.paidUserId, function (err, u) {
+      u.currentHaveToPay += payment.amount / payment.participantsIds.length;
+    });
+
+    //currentPaid（現在の総立替額に今回立て替えた分を追加）
+    user.findById(payment.paidUserId, function (err, u) {
+      u.currentPaid += payment.amount;
+    });
+
+  //currentHaveToPayとcurrentPaidをUsersコレクションでupdateする処理
+
     return res.json(201, payment);
   });
 };
