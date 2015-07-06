@@ -182,10 +182,41 @@ exports.payee = function(req, res) {
   });
 };
 
-exports.groupPayment = function(req, res) {
-  payment.find({isDelete: false, groupId: req.params.id}, {}, {sort: {date: -1}}, function (err, payments) {
+exports.groupIndex = function(req, res) {
+  payment.find({isDelete: false, groupId: req.params.groupId}, {}, {sort: {date: -1}}, function (err, payments) {
     if(err) { return handleError(res, err); }
     return res.json(200, payments);
+  });
+};
+
+exports.groupOverview = function(req, res) {
+  payment.find({isDelete: false, groupId: req.params.groupId}, {}, {sort: {date: -1}}, function (err, payments) {
+    if(err) { return handleError(res, err); }
+
+    var paid = _(payments)
+    .filter(function(payment){
+      return payment.paidUserId == req.params.userId;
+    }).map(function(payment) {
+      return payment.amount;
+    }).reduce(function(sum, amount){
+      return sum += amount;
+    },0);
+
+    var haveToPay = _(payments)
+    .filter(function(payment){
+      return _(payment.participantsIds).contains(req.params.userId);
+    }).map(function(payment) {
+      return payment.amount / payment.participantsIds.length;
+    }).reduce(function(sum, amount){
+      return sum += amount;
+    },0);
+
+    return res.json(200, {
+      'userId': req.params.userId,
+      'amount': paid - haveToPay,
+      'paid': paid,
+      'haveToPay': haveToPay
+    });
   });
 };
 
