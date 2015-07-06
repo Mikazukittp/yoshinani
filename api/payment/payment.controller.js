@@ -109,11 +109,36 @@ exports.update = function(req, res) {
 // Deletes a payment from the DB.
 exports.destroy = function(req, res) {
   payment.findOne({isDelete: false, _id: req.params.id}, function (err, payment) {
-
-    //ここにも更新処理を加える予定
-
     if(err) { return handleError(res, err); }
     if(!payment) { return res.send(404); }
+
+    //ここにも更新処理を加える予定
+    //currentHaveToPay（現在支払わなきゃいけない総額）に今回払うべき額を参加者全員に追加
+    Q.all(payment.participantsIds.map(function(p){
+      var d = Q.defer();
+      user.findById(p, function(err, u){
+        u.currentHaveToPay -= payment.amount / payment.participantsIds.length;
+        u.save(function (err, u) {
+          if (err) { return handleError(res, err); }
+          d.resolve(u);
+        });
+      });
+      return d.promise;
+    }))
+    .then(function(){
+      //currentPaid（現在の総立替額）に今回立て替えた分を追加
+      var d = Q.defer();
+      user.findById(payment.paidUserId, function (err, u) {
+        u.currentPaid -= payment.amount;
+        u.save(function (err, u) {
+          if (err) { return handleError(res, err); }
+          d.resolve(u);
+        });
+      });
+      return d.promise;
+    });
+
+    //paymentのdelete処理
     payment.isDelete = true;
     payment.save(function (err) {
       if (err) { return handleError(res, err); }
