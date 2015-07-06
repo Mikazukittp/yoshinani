@@ -11,6 +11,7 @@ router.get('/overview/:id', controller.overview);
 router.get('/payer/:id', controller.payer);
 router.get('/payee/:id', controller.payee);
 router.post('/', controller.create);
+router.post('/adjust', controller.adjust);
 router.put('/:id', controller.update);
 router.patch('/:id', controller.update);
 router.delete('/:id', controller.destroy);
