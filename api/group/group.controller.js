@@ -1,5 +1,6 @@
 'use strict';
 
+var _ = require('lodash');
 var group = require('./group.model');
 var passport = require('passport');
 var config = require('../../config/environment');
@@ -66,6 +67,27 @@ exports.destroy = function(req, res) {
   group.findByIdAndRemove(req.params.id, function(err, group) {
     if(err) return res.send(500, err);
     return res.send(204);
+  });
+};
+
+//指定したUserをそのグループに追加
+exports.addUser = function(req, res) {
+  group.findById(req.params.groupId, function (err, group) {
+
+    if (err) { return res.send(500, err); }
+    if(!group) { return res.send(404); }
+
+    _.each(req.body.members, function(newMember) {
+      _.each(group.members, function(member) {
+        if(member._id == newMember._id) { return res.send(500, "すでに登録してるよ"); }
+      });
+      group.members.push(newMember);
+    });
+
+    group.save(function (err) {
+      if (err) { return handleError(res, err); }
+      return res.json(200, group);
+    });
   });
 };
 
