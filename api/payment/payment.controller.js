@@ -93,11 +93,12 @@ exports.create = function(req, res) {
 exports.update = function(req, res) {
   if(req.body._id) { delete req.body._id; }
   payment.findOne({isDelete: false, _id: req.params.id}, function (err, payment) {
-
-    //ここにも更新処理を加える予定
-
     if (err) { return handleError(res, err); }
     if(!payment) { return res.send(404); }
+
+    //req.body.amountがupdateされていたら
+    //差分をとってその分だけ、更新するという処理
+
     var updated = _.merge(payment, req.body);
     updated.save(function (err) {
       if (err) { return handleError(res, err); }
@@ -112,8 +113,7 @@ exports.destroy = function(req, res) {
     if(err) { return handleError(res, err); }
     if(!payment) { return res.send(404); }
 
-    //ここにも更新処理を加える予定
-    //currentHaveToPay（現在支払わなきゃいけない総額）に今回払うべき額を参加者全員に追加
+    //currentHaveToPay（現在支払わなきゃいけない総額）を今回削除した額だけ減算
     Q.all(payment.participantsIds.map(function(p){
       var d = Q.defer();
       user.findById(p, function(err, u){
@@ -126,7 +126,7 @@ exports.destroy = function(req, res) {
       return d.promise;
     }))
     .then(function(){
-      //currentPaid（現在の総立替額）に今回立て替えた分を追加
+      //currentPaid（現在の総立替額）を今回消した分だけ減算
       var d = Q.defer();
       user.findById(payment.paidUserId, function (err, u) {
         u.currentPaid -= payment.amount;
