@@ -17,53 +17,53 @@ User.find({}).remove(function() {
     provider: 'local',
     name: '石部 達也',
     email: 'tatsuya_i7@r.recruit.co.jp',
-    password: 'tatsuya_i7'
+    password: 'tatsuya_i7',
   }, {
     provider: 'local',
     name: '大迫 正和',
     email: 'masakazu_osako@r.recruit.co.jp',
-    password: 'masakazu_osako'
+    password: 'masakazu_osako',
   }, {
     provider: 'local',
     name: '奥野 悠一',
     email: 'yokuno0925@r.recruit.co.jp',
-    password: 'yokuno0925'
+    password: 'yokuno0925',
   }, {
     provider: 'local',
     name: '木村 憲仁',
     email: 'knorihito@r.recruit.co.jp',
-    password: 'knorihito'
+    password: 'knorihito',
   }, {
     provider: 'local',
     name: '越島 健介',
     email: 'koshijima@r.recruit.co.jp',
-    password: 'koshijima'
+    password: 'koshijima',
   }, {
     provider: 'local',
     name: '晒谷 亮輔',
     email: 'ryosuke_sarashiya@r.recruit.co.jp',
-    password: 'ryosuke_sarashiya'
+    password: 'ryosuke_sarashiya',
   }, {
     provider: 'local',
     name: '徳永 優作',
     email: 'yusaku_tokunaga@r.recruit.co.jp',
-    password: 'yusaku_tokunaga'
+    password: 'yusaku_tokunaga',
   }, {
     provider: 'local',
     role: 'admin',
     name: '朏島 一樹',
     email: 'haijima@r.recruit.co.jp',
-    password: 'haijima'
+    password: 'haijima',
   }, {
     provider: 'local',
     name: '本庄 智也',
     email: 't_honjo@r.recruit.co.jp',
-    password: 't_honjo'
+    password: 't_honjo',
   }, {
     provider: 'local',
     name: '松山 勇輝',
     email: 'y_matsu@r.recruit.co.jp',
-    password: 'y_matsu'
+    password: 'y_matsu',
   }, function() {
     console.log('finished populating users');
 
