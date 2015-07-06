@@ -20,6 +20,17 @@ exports.index = function(req, res) {
   });
 };
 
+exports.me = function(req, res, next) {
+  var userId = req.user._id;
+  User.findOne({
+    _id: userId
+  }, '-salt -hashedPassword', function(err, user) { // don't ever give out the password or salt
+    if (err) return next(err);
+    if (!user) return res.json(401);
+    res.json(user);
+  });
+};
+
 /**
  * Creates a new group
  */
@@ -58,9 +69,12 @@ exports.destroy = function(req, res) {
   });
 };
 
-
+// 指定されたユーザが所属しているグループを取得
 exports.belongedToBy = function(req, res) {
   var userId = req.params.userId;
 
-  // 指定されたユーザが所属しているグループを取得
+  group.find({ members: {$elemMatch: {_id: userId}}}, function (err, groups) {
+    if(err) return res.send(500, err);
+    return res.json(200, groups);
+  });
 };
