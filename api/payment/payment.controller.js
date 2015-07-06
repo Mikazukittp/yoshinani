@@ -148,8 +148,7 @@ exports.destroy = function(req, res) {
 };
 
 // Get amount how much specific user have to pay
-//取得方法をcurrentを使用したものに変更させたい
-exports.overview = function(req, res) {
+exports.oldOverview = function(req, res) {
   payment.find({isDelete: false}, function (err, payments) {
     if(err) { return handleError(res, err); }
 
@@ -176,6 +175,18 @@ exports.overview = function(req, res) {
       'amount': paid - haveToPay,
       'paid': paid,
       'haveToPay': haveToPay
+    });
+  });
+};
+
+// Get amount how much specific user have to pay
+exports.overview = function(req, res) {
+  user.findById(req.params.id, function (err, u) {
+    return res.json(200, {
+      'userId': req.params.id,
+      'amount': u.currentPaid - u.currentHaveToPay,
+      'paid': u.currentPaid,
+      'haveToPay': u.currentHaveToPay
     });
   });
 };
