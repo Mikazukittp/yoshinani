@@ -13,6 +13,7 @@
  var payment = require('./payment.model');
  var Q = require('q');
  var user = require('../user/user.model');
+ var group = require('../group/group.model')
 
 // Get list of payments
 exports.index = function(req, res) {
@@ -178,6 +179,13 @@ exports.payee = function(req, res) {
         return res.json(200, data);
       });
     });
+  });
+};
+
+exports.groupPayment = function(req, res) {
+  payment.find({isDelete: false, groupId: req.params.id}, {}, {sort: {date: -1}}, function (err, payments) {
+    if(err) { return handleError(res, err); }
+    return res.json(200, payments);
   });
 };
 
