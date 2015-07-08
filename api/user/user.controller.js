@@ -9,22 +9,6 @@ var validationError = function(res, err) {
   return res.json(422, err);
 };
 
-
-
-/** TEST TEST
- * GET User Name
- */
-exports.testUserName = function(req, res, next){
-  var userId = req.params.id;
-  User.findById(userId, function (err, user) {
-    if (err) return next(err);
-    if (!user) return res.send(401);
-    var hoge = user.TestUserName;
-    res.json(hoge);
-  });
-};
-
-
 /**
  * Get list of users
  * restriction: 'admin'
@@ -43,12 +27,14 @@ exports.create = function (req, res, next) {
   var newUser = new User(req.body);
   newUser.provider = 'local';
   newUser.role = 'user';
-  console.log(req.body);
+  newUser.currentHaveToPay = 0;
+  newUser.currentPaid = 0;
   newUser.save(function(err, user) {
     if (err) return validationError(res, err);
     var token = jwt.sign({_id: user._id }, config.secrets.session, { expiresInMinutes: 60*5 });
     res.json({ token: token });
   });
+  return res.json(newUser);
 };
 
 /**

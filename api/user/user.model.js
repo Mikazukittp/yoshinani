@@ -22,29 +22,6 @@ var UserSchema = new Schema({
   currentPaid:{type: Number,min: 0}
 });
 
-/**
- * TestUserName
- */
- UserSchema
- .virtual('TestUserName')
- .get(function(){
-  return{
-    'name': this.name
-  };
- });
-
-/**
- *IDを指定したら、CurrentHaveToPayと、currentAllPayをとってくるメソッド
-
- 
- UserSchema
- .virtual('latestHaveToPay')
- .get(function() {
-  return {
-    'latestHaveToPay': this.name,
-    'role': this.role
-  };
- });
 
 /**
  * Virtuals

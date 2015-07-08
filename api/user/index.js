@@ -13,8 +13,5 @@ router.get('/me', auth.isAuthenticated(), controller.me);
 router.put('/:id/password', auth.isAuthenticated(), controller.changePassword);
 router.get('/:id', /*auth.isAuthenticated(),*/ controller.show);
 router.post('/', controller.create);
-//sarashiya追記 ーユーザーごとの支払額を取得ー
-//router.get('/:id/havetopay',/* auth.isAuthenticated */, controller.hoge);
-router.get('/test/:id' , controller.testUserName);
 
 module.exports = router;
