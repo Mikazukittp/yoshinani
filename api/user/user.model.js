@@ -14,14 +14,12 @@ var UserSchema = new Schema({
   hashedPassword: String,
   provider: String,
   salt: String,
-  currentHaveToPay: String,
-  currentPaid: String,
   createdAt: Date,
   updatedAt: Date,
   deletedAt: Date,
   isDelete: Boolean,
   currentHaveToPay: {type: Number, min: 0},
-  currentAllPay:{type: Number,min: 0}
+  currentPaid:{type: Number,min: 0}
 });
 
 /**
