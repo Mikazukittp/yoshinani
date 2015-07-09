@@ -9,9 +9,10 @@ var router = express.Router();
 
 router.get('/', auth.hasRole('admin'), auth.isAuthenticated(), controller.index);
 router.get('/belongedToBy/:userId', auth.isAuthenticated(), controller.belongedToBy);
-router.post('/addUser/:groupId', auth.isAuthenticated(), controller.sddUser);
+router.post('/addUser/:groupId', auth.isAuthenticated(), controller.addUser);
 router.delete('/:groupId', auth.hasRole('admin'), controller.destroy);
 router.get('/:groupId', auth.isAuthenticated(), controller.show);
 router.post('/', controller.create);
+router.get('/me', auth.isAuthenticated(), controller.me);
 
 module.exports = router;

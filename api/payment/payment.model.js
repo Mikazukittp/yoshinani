@@ -9,6 +9,8 @@ var PaymentSchema = new Schema({
   paidUser: {},
   participantsIds: [String],
   participants: [{}],
+  groupId: String,
+  group: {},
   date: Date,
   event: String,
   description: String,
