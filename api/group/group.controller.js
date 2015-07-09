@@ -1,5 +1,6 @@
 'use strict';
 
+var _ = require('lodash');
 var group = require('./group.model');
 var user = require('../user/user.model');
 var payment = require('../payment/payment.model');
@@ -21,6 +22,17 @@ exports.index = function(req, res) {
     console.log(groups);
     if(err) return res.send(500, err);
     res.json(200, groups);
+  });
+};
+
+exports.me = function(req, res, next) {
+  var userId = req.user._id;
+  User.findOne({
+    _id: userId
+  }, '-salt -hashedPassword', function(err, user) { // don't ever give out the password or salt
+    if (err) return next(err);
+    if (!user) return res.json(401);
+    res.json(user);
   });
 };
 
@@ -62,11 +74,35 @@ exports.destroy = function(req, res) {
   });
 };
 
+//指定したUserをそのグループに追加
+exports.addUser = function(req, res) {
+  group.findById(req.params.groupId, function (err, group) {
 
+    if (err) { return res.send(500, err); }
+    if(!group) { return res.send(404); }
+
+    _.each(req.body.members, function(newMember) {
+      _.each(group.members, function(member) {
+        if(member._id == newMember._id) { return res.send(500, "すでに登録してるよ"); }
+      });
+      group.members.push(newMember);
+    });
+
+    group.save(function (err) {
+      if (err) { return handleError(res, err); }
+      return res.json(200, group);
+    });
+  });
+};
+
+// 指定されたユーザが所属しているグループを取得
 exports.belongedToBy = function(req, res) {
   var userId = req.params.userId;
 
-  // 指定されたユーザが所属しているグループを取得
+  group.find({ members: {$elemMatch: {_id: userId}}}, function (err, groups) {
+    if(err) return res.send(500, err);
+    return res.json(200, groups);
+  });
 };
 
 // Get amount how much specific user have to pay
