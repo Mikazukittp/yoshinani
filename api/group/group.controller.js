@@ -2,6 +2,8 @@
 
 var _ = require('lodash');
 var group = require('./group.model');
+var user = require('../user/user.model');
+var payment = require('../payment/payment.model');
 var passport = require('passport');
 var config = require('../../config/environment');
 var jwt = require('jsonwebtoken');
@@ -15,7 +17,9 @@ var validationError = function(res, err) {
  * restriction: 'admin'
  */
 exports.index = function(req, res) {
-  group.find({}, '-salt -hashedPassword', function (err, groups) {
+  group.find({}, function (err, groups) {
+    console.log(err);
+    console.log(groups);
     if(err) return res.send(500, err);
     res.json(200, groups);
   });
@@ -50,12 +54,12 @@ exports.create = function (req, res, next) {
  * Get a single group
  */
 exports.show = function (req, res, next) {
-  var groupId = req.params.id;
+  var groupId = req.params.groupId;
 
   group.findById(groupId, function (err, group) {
     if (err) return next(err);
     if (!group) return res.send(401);
-    res.json(group.profile);
+    res.json(group);
   });
 };
 
@@ -64,7 +68,7 @@ exports.show = function (req, res, next) {
  * restriction: 'admin'
  */
 exports.destroy = function(req, res) {
-  group.findByIdAndRemove(req.params.id, function(err, group) {
+  group.findByIdAndRemove(req.params.groupId, function(err, group) {
     if(err) return res.send(500, err);
     return res.send(204);
   });
@@ -98,5 +102,14 @@ exports.belongedToBy = function(req, res) {
   group.find({ members: {$elemMatch: {_id: userId}}}, function (err, groups) {
     if(err) return res.send(500, err);
     return res.json(200, groups);
+  });
+};
+
+// Get amount how much specific user have to pay
+exports.overview = function(req, res) {
+  group.findById(req.params.groupId, function (err, g) {
+    if(err) return res.send(500, err);
+    if(!g) return res.send(404, err);
+    return res.json(200, g.members);
   });
 };

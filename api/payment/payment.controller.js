@@ -195,18 +195,6 @@ exports.oldOverview = function(req, res) {
   });
 };
 
-// Get amount how much specific user have to pay
-exports.overview = function(req, res) {
-  user.findById(req.params.id, function (err, u) {
-    return res.json(200, {
-      'userId': req.params.id,
-      'amount': u.currentPaid - u.currentHaveToPay,
-      'paid': u.currentPaid,
-      'haveToPay': u.currentHaveToPay
-    });
-  });
-};
-
 //
 //取得方法をcurrentを使用したものに変更させたい
 exports.payer = function(req, res) {
