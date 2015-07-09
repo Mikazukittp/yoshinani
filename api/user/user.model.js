@@ -14,13 +14,14 @@ var UserSchema = new Schema({
   hashedPassword: String,
   provider: String,
   salt: String,
-  currentHaveToPay: {type: Number, min: 0},
-  currentPaid: {type: Number, min: 0},
   createdAt: Date,
   updatedAt: Date,
   deletedAt: Date,
-  isDelete: Boolean
+  isDelete: Boolean,
+  currentHaveToPay: {type: Number, min: 0},
+  currentPaid:{type: Number,min: 0}
 });
+
 
 /**
  * Virtuals
