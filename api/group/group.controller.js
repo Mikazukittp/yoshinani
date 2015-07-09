@@ -1,6 +1,8 @@
 'use strict';
 
 var group = require('./group.model');
+var user = require('../user/user.model');
+var payment = require('../payment/payment.model');
 var passport = require('passport');
 var config = require('../../config/environment');
 var jwt = require('jsonwebtoken');
@@ -38,7 +40,7 @@ exports.create = function (req, res, next) {
  * Get a single group
  */
 exports.show = function (req, res, next) {
-  var groupId = req.params.id;
+  var groupId = req.params.groupId;
 
   group.findById(groupId, function (err, group) {
     if (err) return next(err);
@@ -52,7 +54,7 @@ exports.show = function (req, res, next) {
  * restriction: 'admin'
  */
 exports.destroy = function(req, res) {
-  group.findByIdAndRemove(req.params.id, function(err, group) {
+  group.findByIdAndRemove(req.params.groupId, function(err, group) {
     if(err) return res.send(500, err);
     return res.send(204);
   });
@@ -63,4 +65,11 @@ exports.belongedToBy = function(req, res) {
   var userId = req.params.userId;
 
   // 指定されたユーザが所属しているグループを取得
+};
+
+// Get amount how much specific user have to pay
+exports.overview = function(req, res) {
+  group.findById(req.params.groupId, function (err, g) {
+    return res.json(200, g.members);
+  });
 };

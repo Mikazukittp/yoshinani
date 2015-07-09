@@ -12,6 +12,7 @@ router.get('/belongedToBy/:userId', auth.isAuthenticated(), controller.belongedT
 router.post('/addUser/:groupId', auth.isAuthenticated(), controller.sddUser);
 router.delete('/:groupId', auth.hasRole('admin'), controller.destroy);
 router.get('/:groupId', auth.isAuthenticated(), controller.show);
+router.get('/overview/:groupId', auth.isAuthenticated(), controller.overview);
 router.post('/', controller.create);
 
 module.exports = router;
