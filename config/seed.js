@@ -9,6 +9,7 @@
  var Thing = require('../api/thing/thing.model');
  var Payment = require('../api/payment/payment.model');
  var User = require('../api/user/user.model');
+ var Group = require('../api/group/group.model');
 
 Thing.find({}).remove(function(){});
 
@@ -89,7 +90,15 @@ User.find({}).remove(function() {
 
     // 作成したUserの_idを取得
     var ids =[];
-    User.find({}, '_id', {sort: {'_id': 1}}, function(err, users){
+    User.find({}, {}, {sort: {'_id': 1}}, function(err, users){
+      //グループを作成
+      Group.find({}).remove(function() {
+        Group.create({
+          name: "研修1G",
+          members: users
+        });
+      });
+
       ids = _.map(users, function(user){
         return user._id;
       });
@@ -149,76 +158,6 @@ User.find({}).remove(function() {
           date: '2014-12-14',
           event: 'Amazon合コン',
           description: 'カラオケに持ち込んだお酒'
-        // }, {
-        //   amount: 99999,
-        //   paidUserId: ids[0],
-        //   participantsIds: [ids[0],ids[1],ids[2],ids[3],ids[4]],
-        //   date: '2015-01-01',
-        //   event: 'ダミー',
-        //   description: 'ダミー'
-        // }, {
-        //   amount: 99999,
-        //   paidUserId: ids[0],
-        //   participantsIds: [ids[0],ids[1],ids[2],ids[3],ids[4]],
-        //   date: '2015-01-01',
-        //   event: 'ダミー',
-        //   description: 'ダミー'
-        // }, {
-        //   amount: 99999,
-        //   paidUserId: ids[0],
-        //   participantsIds: [ids[0],ids[1],ids[2],ids[3],ids[4]],
-        //   date: '2015-01-01',
-        //   event: 'ダミー',
-        //   description: 'ダミー'
-        // }, {
-        //   amount: 99999,
-        //   paidUserId: ids[0],
-        //   participantsIds: [ids[0],ids[1],ids[2],ids[3],ids[4]],
-        //   date: '2015-01-01',
-        //   event: 'ダミー',
-        //   description: 'ダミー'
-        // }, {
-        //   amount: 99999,
-        //   paidUserId: ids[0],
-        //   participantsIds: [ids[0],ids[1],ids[2],ids[3],ids[4]],
-        //   date: '2015-01-01',
-        //   event: 'ダミー',
-        //   description: 'ダミー'
-        // }, {
-        //   amount: 99999,
-        //   paidUserId: ids[5],
-        //   participantsIds: [ids[5],ids[6],ids[7],ids[8],ids[9]],
-        //   date: '2015-01-01',
-        //   event: 'ダミー',
-        //   description: 'ダミー'
-        // }, {
-        //   amount: 99999,
-        //   paidUserId: ids[5],
-        //   participantsIds: [ids[5],ids[6],ids[7],ids[8],ids[9]],
-        //   date: '2015-01-01',
-        //   event: 'ダミー',
-        //   description: 'ダミー'
-        // }, {
-        //   amount: 99999,
-        //   paidUserId: ids[5],
-        //   participantsIds: [ids[5],ids[6],ids[7],ids[8],ids[9]],
-        //   date: '2015-01-01',
-        //   event: 'ダミー',
-        //   description: 'ダミー'
-        // }, {
-        //   amount: 99999,
-        //   paidUserId: ids[5],
-        //   participantsIds: [ids[5],ids[6],ids[7],ids[8],ids[9]],
-        //   date: '2015-01-01',
-        //   event: 'ダミー',
-        //   description: 'ダミー'
-        // }, {
-        //   amount: 99999,
-        //   paidUserId: ids[5],
-        //   participantsIds: [ids[5],ids[6],ids[7],ids[8],ids[9]],
-        //   date: '2015-01-01',
-        //   event: 'ダミー',
-        //   description: 'ダミー'
         });
       });
 
@@ -226,4 +165,3 @@ User.find({}).remove(function() {
 
   });
 });
-

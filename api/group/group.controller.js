@@ -59,7 +59,7 @@ exports.show = function (req, res, next) {
   group.findById(groupId, function (err, group) {
     if (err) return next(err);
     if (!group) return res.send(401);
-    res.json(group.profile);
+    res.json(group);
   });
 };
 
