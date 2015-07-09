@@ -17,8 +17,11 @@ var UserSchema = new Schema({
   createdAt: Date,
   updatedAt: Date,
   deletedAt: Date,
-  isDelete: Boolean
+  isDelete: Boolean,
+  currentHaveToPay: {type: Number, min: 0},
+  currentPaid:{type: Number,min: 0}
 });
+
 
 /**
  * Virtuals
