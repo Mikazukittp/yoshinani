@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  amount: 1
+  event: MyString
+  description: MyString
+  date: 2015-08-13
+  paid_user_id: 
+
+two:
+  amount: 1
+  event: MyString
+  description: MyString
+  date: 2015-08-13
+  paid_user_id: 
