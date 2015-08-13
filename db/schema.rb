@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150812164959) do
+ActiveRecord::Schema.define(version: 20150813060237) do
 
   create_table "group_users", force: true do |t|
     t.integer  "group_id"
@@ -30,6 +30,18 @@ ActiveRecord::Schema.define(version: 20150812164959) do
     t.datetime "updated_at"
   end
 
+  create_table "participants", force: true do |t|
+    t.integer  "payment_id"
+    t.integer  "group_id"
+    t.integer  "user_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "participants", ["group_id"], name: "index_participants_on_group_id", using: :btree
+  add_index "participants", ["payment_id"], name: "index_participants_on_payment_id", using: :btree
+  add_index "participants", ["user_id"], name: "index_participants_on_user_id", using: :btree
+
   create_table "payments", force: true do |t|
     t.integer  "amount"
     t.string   "event"
@@ -38,13 +50,15 @@ ActiveRecord::Schema.define(version: 20150812164959) do
     t.integer  "paid_user_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "group_id"
   end
 
+  add_index "payments", ["group_id"], name: "index_payments_on_group_id", using: :btree
   add_index "payments", ["paid_user_id"], name: "index_payments_on_paid_user_id", using: :btree
 
   create_table "totals", force: true do |t|
-    t.integer  "paid"
-    t.integer  "to_pay"
+    t.decimal  "paid",       precision: 11, scale: 2
+    t.decimal  "to_pay",     precision: 11, scale: 2
     t.integer  "group_id"
     t.integer  "user_id"
     t.datetime "created_at"
