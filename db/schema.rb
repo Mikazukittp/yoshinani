@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150813060237) do
+ActiveRecord::Schema.define(version: 20150813122807) do
 
   create_table "group_users", force: true do |t|
     t.integer  "group_id"
@@ -51,14 +51,15 @@ ActiveRecord::Schema.define(version: 20150813060237) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "group_id"
+    t.boolean  "is_repayment", default: false
   end
 
   add_index "payments", ["group_id"], name: "index_payments_on_group_id", using: :btree
   add_index "payments", ["paid_user_id"], name: "index_payments_on_paid_user_id", using: :btree
 
   create_table "totals", force: true do |t|
-    t.decimal  "paid",       precision: 11, scale: 2
-    t.decimal  "to_pay",     precision: 11, scale: 2
+    t.decimal  "paid",       precision: 11, scale: 2, default: 0.0
+    t.decimal  "to_pay",     precision: 11, scale: 2, default: 0.0
     t.integer  "group_id"
     t.integer  "user_id"
     t.datetime "created_at"

@@ -6,7 +6,7 @@ class CreateUsers < ActiveRecord::Migration
       t.string :email
       t.string :password
       t.string :token
-      t.integer :role
+      t.integer :role, default: 0
 
       t.timestamps
     end
