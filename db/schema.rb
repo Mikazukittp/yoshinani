@@ -32,13 +32,11 @@ ActiveRecord::Schema.define(version: 20150813122807) do
 
   create_table "participants", force: true do |t|
     t.integer  "payment_id"
-    t.integer  "group_id"
     t.integer  "user_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  add_index "participants", ["group_id"], name: "index_participants_on_group_id", using: :btree
   add_index "participants", ["payment_id"], name: "index_participants_on_payment_id", using: :btree
   add_index "participants", ["user_id"], name: "index_participants_on_user_id", using: :btree
 
@@ -75,7 +73,7 @@ ActiveRecord::Schema.define(version: 20150813122807) do
     t.string   "email"
     t.string   "password"
     t.string   "token"
-    t.integer  "role"
+    t.integer  "role",       default: 0
     t.datetime "created_at"
     t.datetime "updated_at"
   end
