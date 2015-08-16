@@ -94,7 +94,6 @@ users.each{ |user|
   10.times.map{|n|n}.sample(rand(9)+1).each{ |n|
     Participant.create({
       "payment_id": payment.id,
-      "group_id": groups[0].id,
       "user_id": users[n].id
     })
   }

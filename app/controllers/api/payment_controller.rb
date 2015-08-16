@@ -1,5 +1,7 @@
 class Api::PaymentController < ApplicationController
 
+  before_action :authenticate!
+
   def index
     # バリデーション
     if params['group_id'].blank?
@@ -102,6 +104,20 @@ class Api::PaymentController < ApplicationController
       total.to_pay += (amount.to_f / participants_ids.size).round(3)
       total.save!
     }
+  end
+
+  def authenticate!
+    # 認証処理をする
+    # 認証に失敗したらログインページにリダイレクトする
+    uid = request.headers[:UID]
+    token = request.headers[:TOKEN]
+    @user = User.find_by(id: uid)
+    if @user.present? and token == @user.token
+      return true
+    else
+      render json: { error: "認証に失敗しました" }, status: :unauthorized
+      return false
+    end
   end
 
 end

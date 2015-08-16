@@ -1,23 +1,72 @@
 class Api::UserController < ApplicationController
+  include UserHelper
 
   def index
-    render json: User.all.to_json(include: {totals: {}}), status: :ok
+    # バリデーション
+    if params['group_id'].blank?
+      render json: {errors: "グループidが入力されていません"}, status: :internal_server_error
+      return
+    end
+    render json: Group.find(params['group_id']).users.to_json(include: {
+        totals: {}
+      }), status: :ok
   end
 
   def show
-    render json: User.first, status: :ok
+    @user = User.find_by(id: params[:id])
+    if @user.present?
+      render json: return_user_object(@user), status: :ok
+    else
+      render json: {error: "指定されたIDのユーザが見つかりません"}, status: :not_found
+    end
   end
 
   def create
-    render json: {}, status: :internal_server_error
+    @user = User.new(user_params)
+    @user.new_token
+    if @user.save
+      render json: return_user_object(@user), status: :ok
+    else
+      render json: {error: "ユーザの作成に失敗しました"}, status: :internal_server_error
+    end
   end
 
   def update
-    render json: {}, status: :internal_server_error
+    @user = User.find_by(id: params[:id])
+    if @user.present?
+      if @user.update(user_params)
+        render json: return_user_object(@user), status: :ok
+      else
+        render json: {error: "ユーザの更新に失敗しました"}, status: :internal_server_error
+      end
+    else
+      render json: {error: "指定されたIDのユーザが見つかりません"}, status: :not_found
+    end
   end
 
   def destroy
-    render json: {}, status: :internal_server_error
+    #今回未実装？
+  end
+
+  def sign_in
+    #usernameとpasswordを受け取って、正しければ、tokenを再生成して、DBに上書く&返す
+    @user = User.find_by(account: params[:account])
+    if @user.blank?
+      render json: {error: "アカウント名かパスワードが正しくありません"}, status: :unauthorized
+      return
+    end
+
+    if @user.authoricate(params[:password])
+      @user.new_token
+      @user.save
+      render json: return_user_object(@user), status: :ok
+    else
+      render json: {error: "アカウント名かパスワードが正しくありません"}, status: :unauthorized
+    end
+  end
+
+  def user_params
+    params.require(:user).permit(:account, :password, :email)
   end
 
 end
