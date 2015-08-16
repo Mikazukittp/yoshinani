@@ -27,7 +27,7 @@ class User < ActiveRecord::Base
 
   # DB格納前のフック
   # saltと暗号化されたパスワードを生成
-  def hash
+  def hash_password
     self.salt = User.new_salt
     self.password = User.crypt_password(self.password, self.salt)
   end
