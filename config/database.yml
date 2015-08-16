@@ -15,7 +15,7 @@ default: &default
   pool: 5
   username: root
   password: password1!
-  socket: /var/lib/mysql/mysql.sock
+  socket: /tmp/mysql.sock
 
 development:
   <<: *default
@@ -50,5 +50,6 @@ test:
 production:
   <<: *default
   database: yoshinani_production
+  socket: /var/lib/mysql/mysql.sock
 #  username: yoshinani
 #  password: <%= ENV['YOSHINANI_DATABASE_PASSWORD'] %>
