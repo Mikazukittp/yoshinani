@@ -1,5 +1,6 @@
 class Api::UserController < ApplicationController
   include UserHelper
+  before_action :authenticate!, except: [:sign_in]
 
   def index
     # バリデーション
