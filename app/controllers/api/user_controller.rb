@@ -1,5 +1,4 @@
 class Api::UserController < ApplicationController
-  include UserHelper
   before_action :authenticate!, except: [:sign_in]
 
   def index
@@ -8,15 +7,13 @@ class Api::UserController < ApplicationController
       render json: {errors: "グループidが入力されていません"}, status: :internal_server_error
       return
     end
-    render json: Group.find(params['group_id']).users.to_json(include: {
-        totals: {}
-      }), status: :ok
+    render json: Group.find(params['group_id']).users, status: :ok
   end
 
   def show
     @user = User.find_by(id: params[:id])
     if @user.present?
-      render json: return_user_object(@user), status: :ok
+      render json: @user, status: :ok
     else
       render json: {error: "指定されたIDのユーザが見つかりません"}, status: :not_found
     end
@@ -26,7 +23,7 @@ class Api::UserController < ApplicationController
     @user = User.new(user_params)
     @user.new_token
     if @user.save
-      render json: return_user_object(@user), status: :ok
+      render json: @user, status: :ok
     else
       render json: {error: "ユーザの作成に失敗しました"}, status: :internal_server_error
     end
@@ -36,7 +33,7 @@ class Api::UserController < ApplicationController
     @user = User.find_by(id: params[:id])
     if @user.present?
       if @user.update(user_params)
-        render json: return_user_object(@user), status: :ok
+        render json: @user, status: :ok
       else
         render json: {error: "ユーザの更新に失敗しました"}, status: :internal_server_error
       end
@@ -60,7 +57,7 @@ class Api::UserController < ApplicationController
     if @user.authoricate(params[:password])
       @user.new_token
       @user.save
-      render json: return_user_object(@user), status: :ok
+      render json: @user, status: :ok
     else
       render json: {error: "アカウント名かパスワードが正しくありません"}, status: :unauthorized
     end

@@ -14,4 +14,8 @@ class Payment < ActiveRecord::Base
   validates :group_id, presence: true
   validates :paid_user_id, presence: true, user_id: true, group_member: true
 
+  def as_json(options={})
+    super methods: [:paid_user, :participants]
+  end
+
 end

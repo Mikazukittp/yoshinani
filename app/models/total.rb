@@ -6,4 +6,8 @@ class Total < ActiveRecord::Base
   validates :to_pay, presence: true, numericality: { greater_than_or_equal_to: 0 }
   validates :user_id, presence: true, user_id: true, group_member: true
 
+  def as_json(options={})
+    super only: [:paid, :to_pay, :group_id, :user_id]
+  end
+
 end

@@ -20,6 +20,10 @@ class User < ActiveRecord::Base
 
   before_create :hash
 
+  def as_json(options={})
+    super except: [:password, :salt], methods: :totals
+  end
+
   # 認証を行う。
   def authoricate(password)
     User.crypt_password(password, self.salt) == self.password
