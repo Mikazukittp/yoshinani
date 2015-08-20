@@ -8,7 +8,8 @@ class Api::PaymentController < ApplicationController
       render json: {errors: "グループidが入力されていません"}, status: :internal_server_error
       return
     end
-    render json: Payment.where(group_id: params['group_id']), status: :ok
+    @payments = Payment.where(group_id: params['group_id']).order(date: :desc).order(created_at: :desc)
+    render json: @payments, status: :ok
   end
 
 
