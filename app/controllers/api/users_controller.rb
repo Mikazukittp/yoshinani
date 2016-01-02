@@ -1,4 +1,4 @@
-class Api::UserController < ApplicationController
+class Api::UsersController < ApplicationController
   before_action :authenticate!, except: [:sign_in]
 
   def index
