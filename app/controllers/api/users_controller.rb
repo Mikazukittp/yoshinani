@@ -1,5 +1,5 @@
 class Api::UsersController < ApplicationController
-  before_action :authenticate!, except: [:sign_in]
+  before_action :authenticate!, except: [:sign_in, :create]
 
   def index
     # バリデーション
@@ -22,6 +22,8 @@ class Api::UsersController < ApplicationController
   def create
     @user = User.new(user_params)
     @user.new_token
+    @user.hash_password
+
     if @user.save
       render json: @user, status: :ok
     else
@@ -56,7 +58,7 @@ class Api::UsersController < ApplicationController
 
     if @user.authoricate(params[:password])
       @user.new_token
-      @user.save
+      @user.save!
       render json: @user, status: :ok
     else
       render json: {error: "アカウント名かパスワードが正しくありません"}, status: :unauthorized
@@ -64,7 +66,7 @@ class Api::UsersController < ApplicationController
   end
 
   def user_params
-    params.require(:user).permit(:account, :password, :email)
+    params.require(:user).permit(:account, :password, :email, :username)
   end
 
 end
