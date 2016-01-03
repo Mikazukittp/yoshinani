@@ -84,4 +84,65 @@ RSpec.describe 'Users', type: :request do
       expect(@json['username']).to eq 'goroumaru'
     end
   end
+
+  describe 'POST /api/users/sign_in' do
+    before do
+      @user = create(:user, account: 'deikun_char', email: 'red-suisei@example.com', password: 'password1!')
+      @user.new_token
+      @user.hash_password
+      @user.save!
+    end
+
+    context '正しいパラメータを送った場合' do
+      before do
+        post sign_in_api_users_path, { account: 'deikun_char', password: 'password1!' }
+        @json = JSON.parse(response.body)
+      end
+
+      example '200が返ってくること' do
+        expect(response).to be_success
+        expect(response.status).to eq 200
+      end
+
+      example '期待したデータが取得されていること' do
+        expect(@json['account']).to eq 'deikun_char'
+      end
+
+      example '新しくtokenが発行されていること' do
+        expect(@json['token']).not_to eq @user.token
+      end
+    end
+
+    context '不正なパラメータ(account)を送った場合' do
+      before do
+        post sign_in_api_users_path, { account: 'nise_char', password: 'password1!' }
+        @json = JSON.parse(response.body)
+      end
+
+      example '401が返ってくること' do
+        expect(response).not_to be_success
+        expect(response.status).to eq 401
+      end
+
+      example '適切なエラーメッセージが返されること' do
+        expect(@json['error']).to eq 'アカウント名かパスワードが正しくありません'
+      end
+    end
+
+    context '不正なパラメータ(password)を送った場合' do
+      before do
+        post sign_in_api_users_path, { account: 'deikun_char', password: 'password100!' }
+        @json = JSON.parse(response.body)
+      end
+
+      example '401が返ってくること' do
+        expect(response).not_to be_success
+        expect(response.status).to eq 401
+      end
+
+      example '適切なエラーメッセージが返されること' do
+        expect(@json['error']).to eq 'アカウント名かパスワードが正しくありません'
+      end
+    end
+  end
 end
