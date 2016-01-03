@@ -4,7 +4,7 @@ class Api::UsersController < ApplicationController
   def index
     # バリデーション
     if params['group_id'].blank?
-      render json: {errors: "グループidが入力されていません"}, status: :internal_server_error
+      render json: {error: "グループidが入力されていません"}, status: :internal_server_error
       return
     end
     render json: Group.find(params['group_id']).users, status: :ok

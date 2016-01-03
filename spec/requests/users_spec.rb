@@ -62,7 +62,7 @@ RSpec.describe 'Users', type: :request do
       end
 
       example '適切なエラーメッセージが返されること' do
-        expect(@json['errors']).to eq 'グループidが入力されていません'
+        expect(@json['error']).to eq 'グループidが入力されていません'
       end
     end
   end
