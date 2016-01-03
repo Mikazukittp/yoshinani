@@ -85,6 +85,50 @@ RSpec.describe 'Users', type: :request do
     end
   end
 
+  describe 'POST /api/users' do
+    let(:user_params) {{
+      user: {
+        email: 'unique@example.com',
+        account: 'unique_man',
+        username: 'unique_man',
+        password: 'password1!'
+      }
+    }}
+
+    context '正しいパラメータを送った場合' do
+      before do
+        post api_users_path, user_params
+        @json = JSON.parse(response.body)
+      end
+
+      example '200が返ってくること' do
+        expect(response).to be_success
+        expect(response.status).to eq 200
+      end
+
+      example '期待したデータが取得されていること' do
+        expect(@json['account']).to eq 'unique_man'
+      end
+    end
+
+    context 'すでに存在するemailの場合' do
+      before do
+        create(:user, email: 'unique@example.com')
+        post api_users_path, user_params
+        @json = JSON.parse(response.body)
+      end
+
+      example '500が返ってくること' do
+        expect(response).not_to be_success
+        expect(response.status).to eq 500
+      end
+
+      example '期待したデータが取得されていること' do
+        expect(@json['error']).to eq 'ユーザの作成に失敗しました'
+      end
+    end
+  end
+
   describe 'POST /api/users/sign_in' do
     before do
       @user = create(:user, account: 'deikun_char', email: 'red-suisei@example.com', password: 'password1!')
