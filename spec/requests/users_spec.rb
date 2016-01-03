@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe "Users", type: :request do
   describe "GET /api/users/:id" do
-    let(:user) { FactoryGirl.create(:user, username: "goroumaru") }
+    let(:user) { create(:user, username: "goroumaru") }
     let(:env) { { UID: user.id, TOKEN: user.token } }
 
     before do
