@@ -1,5 +1,6 @@
 class Api::UsersController < ApplicationController
   before_action :authenticate!, except: [:sign_in, :create]
+  before_action :set_user, only: [:show, :update]
 
   def index
     # バリデーション
@@ -11,12 +12,7 @@ class Api::UsersController < ApplicationController
   end
 
   def show
-    @user = User.find_by(id: params[:id])
-    if @user.present?
-      render json: @user, status: :ok
-    else
-      render json: {error: "指定されたIDのユーザが見つかりません"}, status: :not_found
-    end
+    render json: @user, status: :ok
   end
 
   def create
@@ -30,15 +26,10 @@ class Api::UsersController < ApplicationController
   end
 
   def update
-    @user = User.find_by(id: params[:id])
-    if @user.present?
-      if @user.update(user_params)
-        render json: @user, status: :ok
-      else
-        render json: {error: "ユーザの更新に失敗しました"}, status: :internal_server_error
-      end
+    if @user.update(user_params)
+      render json: @user, status: :ok
     else
-      render json: {error: "指定されたIDのユーザが見つかりません"}, status: :not_found
+      render json: {error: "ユーザの更新に失敗しました"}, status: :internal_server_error
     end
   end
 
@@ -63,8 +54,17 @@ class Api::UsersController < ApplicationController
     end
   end
 
+  private
+
   def user_params
     params.require(:user).permit(:account, :password, :email, :username)
   end
 
+  def set_user
+    @user = User.find_by(id: params[:id])
+    unless @user.present?
+      render json: {error: "指定されたIDのユーザが見つかりません"}, status: :not_found
+      return
+    end
+  end
 end
