@@ -18,7 +18,8 @@ class User < ActiveRecord::Base
   validates :password, presence: true
   validates :role, numericality: { only_integer: true }
 
-  before_create :hash
+  before_create :hash_password
+  before_create :new_token
 
   def as_json(options={})
     super except: [:password, :salt], methods: :totals

@@ -21,8 +21,6 @@ class Api::UsersController < ApplicationController
 
   def create
     @user = User.new(user_params)
-    @user.new_token
-    @user.hash_password
 
     if @user.save
       render json: @user, status: :ok

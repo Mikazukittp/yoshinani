@@ -108,6 +108,7 @@ RSpec.describe 'Users', type: :request do
 
       example '期待したデータが取得されていること' do
         expect(@json['account']).to eq 'unique_man'
+        expect(@json['token']).not_to be_empty
       end
     end
 
@@ -132,9 +133,6 @@ RSpec.describe 'Users', type: :request do
   describe 'POST /api/users/sign_in' do
     before do
       @user = create(:user, account: 'deikun_char', email: 'red-suisei@example.com', password: 'password1!')
-      @user.new_token
-      @user.hash_password
-      @user.save!
     end
 
     context '正しいパラメータを送った場合' do
