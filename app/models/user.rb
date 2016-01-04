@@ -38,9 +38,7 @@ class User < ActiveRecord::Base
   # tokenの新規作成
   def new_token
     s = SecureRandom.base64(24)
-    s[0, if s.size > 32 then 32 else s.size end]
-    self.token = s
-    s
+    self.token = s[0, 32]
   end
 
   private
@@ -54,6 +52,6 @@ class User < ActiveRecord::Base
   def self.new_salt
     # s = rand.to_s.tr('+', '.')
     s = SecureRandom.base64(24)
-    s[0, if s.size > 32 then 32 else s.size end]
+    s[0, 32]
   end
 end
