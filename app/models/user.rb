@@ -8,8 +8,6 @@ class User < ActiveRecord::Base
   has_many :participants
   has_many :to_pay_payments, class_name: 'Payment', through: :participants, source: :payment
 
-  # soft_deletable
-
   # validation
   VALID_EMAIL_REGEX =  /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
   validates :account, presence: true, uniqueness: true
@@ -25,7 +23,7 @@ class User < ActiveRecord::Base
     super except: [:password, :salt], methods: :totals
   end
 
-  # 認証を行う。
+  # 認証を行う
   def authoricate(password)
     User.crypt_password(password, self.salt) == self.password
   end
@@ -58,5 +56,4 @@ class User < ActiveRecord::Base
     s = SecureRandom.base64(24)
     s[0, if s.size > 32 then 32 else s.size end]
   end
-
 end
