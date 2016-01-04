@@ -130,6 +130,42 @@ RSpec.describe 'Users', type: :request do
     end
   end
 
+  describe 'PATCH /api/users/:id' do
+    let!(:user) { create(:user, username: 'goroumaru') }
+
+    context '正しいパラメータを送った場合' do
+      before do
+        patch api_user_path(user), { user:{ username: 'ganbare_goemon' } }, env
+        @json = JSON.parse(response.body)
+      end
+
+      example '200が返ってくること' do
+        expect(response).to be_success
+        expect(response.status).to eq 200
+      end
+
+      example '期待したデータが取得されていること' do
+        expect(@json['username']).to eq 'ganbare_goemon'
+      end
+    end
+
+    context '存在しないidを指定' do
+      before do
+        patch api_user_path(id: 10000), { user:{ username: 'ganbare_goemon' } }, env
+        @json = JSON.parse(response.body)
+      end
+
+      example '404が返ってくること' do
+        expect(response).not_to be_success
+        expect(response.status).to eq 404
+      end
+
+      example '適切なエラーメッセージが返されること' do
+        expect(@json['error']).to eq '指定されたIDのユーザが見つかりません'
+      end
+    end
+  end
+
   describe 'POST /api/users/sign_in' do
     before do
       @user = create(:user, account: 'deikun_char', email: 'red-suisei@example.com', password: 'password1!')
