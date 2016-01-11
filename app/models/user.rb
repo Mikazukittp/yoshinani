@@ -8,8 +8,6 @@ class User < ActiveRecord::Base
   has_many :participants
   has_many :to_pay_payments, class_name: 'Payment', through: :participants, source: :payment
 
-  # soft_deletable
-
   # validation
   VALID_EMAIL_REGEX =  /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
   validates :account, presence: true, uniqueness: true
@@ -18,13 +16,14 @@ class User < ActiveRecord::Base
   validates :password, presence: true
   validates :role, numericality: { only_integer: true }
 
-  before_create :hash
+  before_create :hash_password
+  before_create :new_token
 
   def as_json(options={})
     super except: [:password, :salt], methods: :totals
   end
 
-  # 認証を行う。
+  # 認証を行う
   def authoricate(password)
     User.crypt_password(password, self.salt) == self.password
   end
@@ -39,9 +38,7 @@ class User < ActiveRecord::Base
   # tokenの新規作成
   def new_token
     s = SecureRandom.base64(24)
-    s[0, if s.size > 32 then 32 else s.size end]
-    self.token = s
-    s
+    self.token = s[0, 32]
   end
 
   private
@@ -55,7 +52,6 @@ class User < ActiveRecord::Base
   def self.new_salt
     # s = rand.to_s.tr('+', '.')
     s = SecureRandom.base64(24)
-    s[0, if s.size > 32 then 32 else s.size end]
+    s[0, 32]
   end
-
 end
