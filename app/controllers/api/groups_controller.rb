@@ -1,7 +1,8 @@
 class Api::GroupsController < ApplicationController
+  before_action :set_user, only: %i(index)
 
   def index
-    render json: Group.all, status: :ok
+    render json: @user.groups, status: :ok
   end
 
   def show
@@ -20,4 +21,18 @@ class Api::GroupsController < ApplicationController
     render json: {}, status: :internal_server_error
   end
 
+  private
+
+  def set_user
+    if params['user_id'].blank?
+      render json: {error: "ユーザーidが入力されていません"}, status: :bad_request
+      return
+    end
+
+    @user = User.find_by(id: params['user_id'])
+    unless @user.present?
+      render json: {error: "指定されたIDのユーザが見つかりません"}, status: :not_found
+      return
+    end
+  end
 end
