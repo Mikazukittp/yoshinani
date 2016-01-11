@@ -89,7 +89,7 @@ class Api::PaymentsController < ApplicationController
 
   def set_payment
     @payment = Payment.find_by(id: params[:id])
-    unless @payment.present?
+    unless @payment.present? && @user.groups.exists?(id: @payment.group_id)
       render json: {error: "指定されたIDの精算が見つかりません"}, status: :not_found
       return
     end
