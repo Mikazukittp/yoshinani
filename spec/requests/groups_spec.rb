@@ -137,15 +137,18 @@ RSpec.describe 'Groups', type: :request do
     end
   end
 
-  describe 'POST /api/users/sign_in' do
+  describe 'DELETE /api/groups/:id' do
+    let!(:group_1) { create(:group, name: '南斗五車星') }
+
     before do
-      @user = create(:user, account: 'deikun_char', email: 'red-suisei@example.com', password: 'password1!')
+      create(:group_user, user_id: sign_in_user.id, group_id: group_1.id)
     end
 
-    context '正しいパラメータを送った場合' do
+    context '自分が所属しているグループのidを指定した場合' do
       before do
-        post sign_in_api_users_path, { account: 'deikun_char', password: 'password1!' }
+        delete api_group_path(group_1), {}, env
         @json = JSON.parse(response.body)
+        @group = Group.find_by(id: group_1.id)
       end
 
       example '200が返ってくること' do
@@ -153,44 +156,9 @@ RSpec.describe 'Groups', type: :request do
         expect(response.status).to eq 200
       end
 
-      example '期待したデータが取得されていること' do
-        expect(@json['account']).to eq 'deikun_char'
-      end
-
-      example '新しくtokenが発行されていること' do
-        expect(@json['token']).not_to eq @user.token
-      end
-    end
-
-    context '不正なパラメータ(account)を送った場合' do
-      before do
-        post sign_in_api_users_path, { account: 'nise_char', password: 'password1!' }
-        @json = JSON.parse(response.body)
-      end
-
-      example '401が返ってくること' do
-        expect(response).not_to be_success
-        expect(response.status).to eq 401
-      end
-
-      example '適切なエラーメッセージが返されること' do
-        expect(@json['error']).to eq 'アカウント名かパスワードが正しくありません'
-      end
-    end
-
-    context '不正なパラメータ(password)を送った場合' do
-      before do
-        post sign_in_api_users_path, { account: 'deikun_char', password: 'password100!' }
-        @json = JSON.parse(response.body)
-      end
-
-      example '401が返ってくること' do
-        expect(response).not_to be_success
-        expect(response.status).to eq 401
-      end
-
-      example '適切なエラーメッセージが返されること' do
-        expect(@json['error']).to eq 'アカウント名かパスワードが正しくありません'
+      example '指定したデータが削除されていること' do
+        expect(@json['name']).to eq '南斗五車星'
+        expect(@group).to be_nil
       end
     end
   end

@@ -29,7 +29,11 @@ class Api::GroupsController < ApplicationController
   end
 
   def destroy
-    render json: {}, status: :internal_server_error
+    if @group.destroy
+      render json: @group, status: :ok
+    else
+      render json: {error: "グループの更新に失敗しました"}, status: :internal_server_error
+    end
   end
 
   private
