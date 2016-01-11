@@ -1,4 +1,4 @@
-class Api::PaymentController < ApplicationController
+class Api::PaymentsController < ApplicationController
 
   before_action :authenticate!
 
