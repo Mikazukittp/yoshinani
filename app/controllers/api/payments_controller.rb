@@ -1,14 +1,10 @@
 class Api::PaymentsController < ApplicationController
   before_action :authenticate!
   before_action :set_payment, only: %i(show update)
+  before_action :set_group, only: %i(index)
 
   def index
-    # バリデーション
-    if params['group_id'].blank?
-      render json: {errors: "グループidが入力されていません"}, status: :internal_server_error
-      return
-    end
-    @payments = Payment.where(group_id: params['group_id']).order(date: :desc, created_at: :desc)
+    @payments = @group.payments.order(date: :desc, created_at: :desc)
     render json: @payments, status: :ok
   end
 
@@ -95,6 +91,20 @@ class Api::PaymentsController < ApplicationController
     @payment = Payment.find_by(id: params[:id])
     unless @payment.present?
       render json: {error: "指定されたIDの精算が見つかりません"}, status: :not_found
+      return
+    end
+  end
+
+  def set_group
+    if params['group_id'].blank?
+      render json: {errors: "グループidが入力されていません"}, status: :bad_request
+      return
+    end
+
+    @group = @user.groups.find_by(id: params['group_id'])
+
+    unless @group.present?
+      render json: {error: "指定されたIDのグループが見つかりません"}, status: :bad_request
       return
     end
   end
