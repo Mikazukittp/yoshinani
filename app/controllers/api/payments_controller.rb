@@ -13,25 +13,20 @@ class Api::PaymentsController < ApplicationController
   end
 
   def create
-    @params = params.require(:payment).permit(:amount, :group_id ,:event, :description, :date, :paid_user_id, :is_repayment)
-    participants_ids = JSON.parse(params.require(:payment).permit(:participants_ids)['participants_ids']||"[]")
+    participants_ids = params[:payment][:participants_ids]
 
     ActiveRecord::Base.transaction do
-      # 立替の作成
-      payment = Payment.create!(@params)
+      payment = Payment.create!(payment_params)
 
       # 立替を参加者に紐付け
       participants_ids.each{ |participant_id|
-        payment.participants << User.find(participant_id)
+        next unless payment.group.users.exists?(id: participant_id)
+        payment.participant_reference.create!(user_id: participant_id)
       }
-
       # 暫定総額の設定
-      set_total(@params['amount'], @params['paid_user_id'], participants_ids, @params['group_id'])
-
+      set_total(payment.amount, payment.paid_user_id, payment.participants.pluck(:id), payment.group_id)
       # 結果の返却
-      render json: payment.to_json(include: {
-        group: {}, paid_user: {}, participants: {}
-      }), status: :created
+      render json: payment.to_json(include: [:group, :paid_user, :participants]), status: :created
     end
 
   rescue ActiveRecord::RecordInvalid => invalid

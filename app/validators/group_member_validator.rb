@@ -1,7 +1,9 @@
 class GroupMemberValidator < ActiveModel::EachValidator
   def validate_each(record, attribute, value)
     if value.present?
-      GroupUser.where(user_id: value, group_id: record.group_id).size.nonzero?
+      return if GroupUser.exists?(user_id: value, group_id: record.group_id)
+
+      record.errors.add attribute, '指定されたgroupに所属されておりません'
     end
   end
 end
