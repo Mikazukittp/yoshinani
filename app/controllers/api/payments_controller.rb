@@ -1,5 +1,6 @@
 class Api::PaymentsController < ApplicationController
   before_action :authenticate!
+  before_action :set_payment, only: %i(show update)
 
   def index
     # バリデーション
@@ -12,7 +13,7 @@ class Api::PaymentsController < ApplicationController
   end
 
   def show
-    render json: Payment.find(params['id']), status: :ok
+    render json: @payment, status: :ok
   end
 
   def create
@@ -89,6 +90,18 @@ class Api::PaymentsController < ApplicationController
   end
 
   private
+
+  def set_payment
+    @payment = Payment.find_by(id: params[:id])
+    unless @payment.present?
+      render json: {error: "指定されたIDの精算が見つかりません"}, status: :not_found
+      return
+    end
+  end
+
+  def payment_params
+    params.require(:payment).permit(:amount, :group_id ,:event, :description, :date, :paid_user_id, :is_repayment)
+  end
 
   def set_total(amount, paid_user_id, participants_ids, group_id)
     # 支払ユーザの支払総額に加算
