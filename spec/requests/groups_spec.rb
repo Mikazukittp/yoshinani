@@ -40,21 +40,34 @@ RSpec.describe 'Groups', type: :request do
     end
   end
 
-  describe 'GET /api/users/:id' do
-    let(:user) { create(:user, username: 'goroumaru') }
+  describe 'GET /api/groups/:id' do
+    context '自分が所属するグループを指定した場合' do
+      before do
+        create(:group_user, user_id: sign_in_user.id, group_id: group.id)
+        get api_group_path(group), {}, env
+        @json = JSON.parse(response.body)
+      end
 
-    before do
-      get api_user_path(user), {}, env
-      @json = JSON.parse(response.body)
+      example '200が返ってくること' do
+        expect(response).to be_success
+        expect(response.status).to eq 200
+      end
+
+      example '期待したデータが取得されていること' do
+        expect(@json['name']).to eq '幻影旅団'
+      end
     end
 
-    example '200が返ってくること' do
-      expect(response).to be_success
-      expect(response.status).to eq 200
-    end
+    context '自分が所属していないグループを指定した場合' do
+      before do
+        get api_group_path(group), {}, env
+        @json = JSON.parse(response.body)
+      end
 
-    example '期待したデータが取得されていること' do
-      expect(@json['username']).to eq 'goroumaru'
+      example '404が返ってくること' do
+        expect(response).not_to be_success
+        expect(response.status).to eq 404
+      end
     end
   end
 
