@@ -1,5 +1,4 @@
 class Api::PaymentsController < ApplicationController
-
   before_action :authenticate!
 
   def index
@@ -12,11 +11,9 @@ class Api::PaymentsController < ApplicationController
     render json: @payments, status: :ok
   end
 
-
   def show
     render json: Payment.find(params['id']), status: :ok
   end
-
 
   def create
     @params = params.require(:payment).permit(:amount, :group_id ,:event, :description, :date, :paid_user_id, :is_repayment)
@@ -106,5 +103,4 @@ class Api::PaymentsController < ApplicationController
       total.save!
     }
   end
-
 end
