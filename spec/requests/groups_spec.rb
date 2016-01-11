@@ -71,7 +71,7 @@ RSpec.describe 'Groups', type: :request do
     end
   end
 
-  describe 'POST /api/users' do
+  describe 'POST /api/groups' do
     let(:group_params) {{
       group: {
         name: '十本刀',
@@ -96,12 +96,17 @@ RSpec.describe 'Groups', type: :request do
     end
   end
 
-  describe 'PATCH /api/users/:id' do
-    let!(:user) { create(:user, username: 'goroumaru') }
+  describe 'PATCH /api/groups/:id' do
+    let!(:group_1) { create(:group, name: 'ふんばり温泉チーム') }
+    let!(:group_2) { create(:group, name: 'THE蓮') }
+
+    before do
+      create(:group_user, user_id: sign_in_user.id, group_id: group_1.id)
+    end
 
     context '正しいパラメータを送った場合' do
       before do
-        patch api_user_path(user), { user:{ username: 'ganbare_goemon' } }, env
+        patch api_group_path(group_1), { group:{ name: 'X-LAWS' } }, env
         @json = JSON.parse(response.body)
       end
 
@@ -111,13 +116,13 @@ RSpec.describe 'Groups', type: :request do
       end
 
       example '期待したデータが取得されていること' do
-        expect(@json['username']).to eq 'ganbare_goemon'
+        expect(@json['name']).to eq 'X-LAWS'
       end
     end
 
-    context '存在しないidを指定' do
+    context '自分が所属しないグループのidを指定した場合' do
       before do
-        patch api_user_path(id: 10000), { user:{ username: 'ganbare_goemon' } }, env
+        patch api_group_path(group_2), { group:{ name: 'X-LAWS' } }, env
         @json = JSON.parse(response.body)
       end
 
@@ -127,7 +132,7 @@ RSpec.describe 'Groups', type: :request do
       end
 
       example '適切なエラーメッセージが返されること' do
-        expect(@json['error']).to eq '指定されたIDのユーザが見つかりません'
+        expect(@json['error']).to eq '指定されたIDのグループが見つかりません'
       end
     end
   end
