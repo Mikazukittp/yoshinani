@@ -72,18 +72,16 @@ RSpec.describe 'Groups', type: :request do
   end
 
   describe 'POST /api/users' do
-    let(:user_params) {{
-      user: {
-        email: 'unique@example.com',
-        account: 'unique_man',
-        username: 'unique_man',
-        password: 'password1!'
+    let(:group_params) {{
+      group: {
+        name: '十本刀',
+        description: '尖閣は入れなかった'
       }
     }}
 
     context '正しいパラメータを送った場合' do
       before do
-        post api_users_path, user_params
+        post api_groups_path, group_params, env
         @json = JSON.parse(response.body)
       end
 
@@ -93,25 +91,7 @@ RSpec.describe 'Groups', type: :request do
       end
 
       example '期待したデータが取得されていること' do
-        expect(@json['account']).to eq 'unique_man'
-        expect(@json['token']).not_to be_empty
-      end
-    end
-
-    context 'すでに存在するemailの場合' do
-      before do
-        create(:user, email: 'unique@example.com')
-        post api_users_path, user_params
-        @json = JSON.parse(response.body)
-      end
-
-      example '500が返ってくること' do
-        expect(response).not_to be_success
-        expect(response.status).to eq 500
-      end
-
-      example '期待したデータが取得されていること' do
-        expect(@json['error']).to eq 'ユーザの作成に失敗しました'
+        expect(@json['name']).to eq '十本刀'
       end
     end
   end

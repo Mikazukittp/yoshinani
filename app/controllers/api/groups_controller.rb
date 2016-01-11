@@ -11,7 +11,13 @@ class Api::GroupsController < ApplicationController
   end
 
   def create
-    render json: {}, status: :internal_server_error
+    @group = @user.groups.new(group_params)
+
+    if @group.save
+      render json: @group, status: :ok
+    else
+      render json: {error: "グループの作成に失敗しました"}, status: :internal_server_error
+    end
   end
 
   def update
@@ -30,5 +36,9 @@ class Api::GroupsController < ApplicationController
       render json: {error: "指定されたIDのグループが見つかりません"}, status: :not_found
       return
     end
+  end
+
+  def group_params
+    params.require(:group).permit(:name, :description)
   end
 end
