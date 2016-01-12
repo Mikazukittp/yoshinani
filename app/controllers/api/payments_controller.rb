@@ -35,36 +35,34 @@ class Api::PaymentsController < ApplicationController
 
 
   def update
-    @payment = Payment.find(params['id'])
+    unless @payment.paid_user.id == @user.id
+      render json: {errors: "権限のない操作です"}, status: :unauthorized
+      return
+    end
 
-    @params = params.require(:payment).permit(:amount, :group_id ,:event, :description, :date, :paid_user_id, :is_repayment)
-    amount = @params['amount']
-    paid_user_id = @params['paid_user_id']
-    participants_ids = JSON.parse(params.require(:payment).permit(:participants_ids)['participants_ids']||"[]")
-    group_id = @params['group_id']
-
+    participants_ids = params[:payment][:participants_ids]
+    @params = payment_params
     old_amount = @payment.amount
-    old_paid_user_id = @payment.paid_user_id
     old_participants_ids = @payment.participants.pluck(:id)
-    old_group_id = @payment.group_id
 
     ActiveRecord::Base.transaction do
       # 立替の作成
-      @payment.attributes = @params
-      @payment.save!
+      @payment.update!(@params)
 
       # 削除された参加者の紐付けを解除
       (old_participants_ids-participants_ids).each{ |removed_participant_id|
-        Participant.delete_all(payment_id: @payment.id, user_id: removed_participant_id)
+        @payment.participant_reference.find_by(user_id: removed_participant_id).destroy!
       }
+
       # 追加された参加者の紐付けを作成
-      (participants_ids-old_participants_ids).each{ |added_participant_id|
-        @payment.participants << User.find(added_participant_id)
+      (participants_ids-old_participants_ids).each{ |participant_id|
+        next unless @payment.group.users.exists?(id: participant_id)
+        @payment.participant_reference.create!(user_id: participant_id)
       }
 
       # 暫定総額の設定
-      set_total(-old_amount, old_paid_user_id, old_participants_ids, old_group_id)
-      set_total(amount, paid_user_id, participants_ids, group_id)
+      set_total(-old_amount, @payment.paid_user_id, old_participants_ids, @payment.group_id)
+      set_total(@payment.amount, @payment.paid_user_id, participants_ids, @payment.group_id)
 
       # 結果の返却
       render json: @payment.to_json(include: {
