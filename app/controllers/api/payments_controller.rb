@@ -1,43 +1,32 @@
 class Api::PaymentsController < ApplicationController
-
   before_action :authenticate!
+  before_action :set_payment, only: %i(show update)
+  before_action :set_group, only: %i(index)
 
   def index
-    # バリデーション
-    if params['group_id'].blank?
-      render json: {errors: "グループidが入力されていません"}, status: :internal_server_error
-      return
-    end
-    @payments = Payment.where(group_id: params['group_id']).order(date: :desc).order(created_at: :desc)
+    @payments = @group.payments.order(date: :desc, created_at: :desc)
     render json: @payments, status: :ok
   end
 
-
   def show
-    render json: Payment.find(params['id']), status: :ok
+    render json: @payment, status: :ok
   end
 
-
   def create
-    @params = params.require(:payment).permit(:amount, :group_id ,:event, :description, :date, :paid_user_id, :is_repayment)
-    participants_ids = JSON.parse(params.require(:payment).permit(:participants_ids)['participants_ids']||"[]")
+    participants_ids = params[:payment][:participants_ids]
 
     ActiveRecord::Base.transaction do
-      # 立替の作成
-      payment = Payment.create!(@params)
+      payment = Payment.create!(payment_params)
 
       # 立替を参加者に紐付け
       participants_ids.each{ |participant_id|
-        payment.participants << User.find(participant_id)
+        next unless payment.group.users.exists?(id: participant_id)
+        payment.participant_reference.create!(user_id: participant_id)
       }
-
       # 暫定総額の設定
-      set_total(@params['amount'], @params['paid_user_id'], participants_ids, @params['group_id'])
-
+      set_total(payment.amount, payment.paid_user_id, payment.participants.pluck(:id), payment.group_id)
       # 結果の返却
-      render json: payment.to_json(include: {
-        group: {}, paid_user: {}, participants: {}
-      }), status: :created
+      render json: payment.to_json(include: [:group, :paid_user, :participants]), status: :created
     end
 
   rescue ActiveRecord::RecordInvalid => invalid
@@ -46,36 +35,34 @@ class Api::PaymentsController < ApplicationController
 
 
   def update
-    @payment = Payment.find(params['id'])
+    unless @payment.paid_user.id == @user.id
+      render json: {errors: "権限のない操作です"}, status: :unauthorized
+      return
+    end
 
-    @params = params.require(:payment).permit(:amount, :group_id ,:event, :description, :date, :paid_user_id, :is_repayment)
-    amount = @params['amount']
-    paid_user_id = @params['paid_user_id']
-    participants_ids = JSON.parse(params.require(:payment).permit(:participants_ids)['participants_ids']||"[]")
-    group_id = @params['group_id']
-
+    participants_ids = params[:payment][:participants_ids]
+    @params = payment_params
     old_amount = @payment.amount
-    old_paid_user_id = @payment.paid_user_id
     old_participants_ids = @payment.participants.pluck(:id)
-    old_group_id = @payment.group_id
 
     ActiveRecord::Base.transaction do
       # 立替の作成
-      @payment.attributes = @params
-      @payment.save!
+      @payment.update!(@params)
 
       # 削除された参加者の紐付けを解除
       (old_participants_ids-participants_ids).each{ |removed_participant_id|
-        Participant.delete_all(payment_id: @payment.id, user_id: removed_participant_id)
+        @payment.participant_reference.find_by(user_id: removed_participant_id).destroy!
       }
+
       # 追加された参加者の紐付けを作成
-      (participants_ids-old_participants_ids).each{ |added_participant_id|
-        @payment.participants << User.find(added_participant_id)
+      (participants_ids-old_participants_ids).each{ |participant_id|
+        next unless @payment.group.users.exists?(id: participant_id)
+        @payment.participant_reference.create!(user_id: participant_id)
       }
 
       # 暫定総額の設定
-      set_total(-old_amount, old_paid_user_id, old_participants_ids, old_group_id)
-      set_total(amount, paid_user_id, participants_ids, group_id)
+      set_total(-old_amount, @payment.paid_user_id, old_participants_ids, @payment.group_id)
+      set_total(@payment.amount, @payment.paid_user_id, participants_ids, @payment.group_id)
 
       # 結果の返却
       render json: @payment.to_json(include: {
@@ -93,6 +80,32 @@ class Api::PaymentsController < ApplicationController
 
   private
 
+  def set_payment
+    @payment = Payment.find_by(id: params[:id])
+    unless @payment.present? && @user.groups.exists?(id: @payment.group_id)
+      render json: {error: "指定されたIDの精算が見つかりません"}, status: :not_found
+      return
+    end
+  end
+
+  def set_group
+    if params['group_id'].blank?
+      render json: {errors: "グループidが入力されていません"}, status: :bad_request
+      return
+    end
+
+    @group = @user.groups.find_by(id: params['group_id'])
+
+    unless @group.present?
+      render json: {error: "指定されたIDのグループが見つかりません"}, status: :bad_request
+      return
+    end
+  end
+
+  def payment_params
+    params.require(:payment).permit(:amount, :group_id ,:event, :description, :date, :paid_user_id, :is_repayment)
+  end
+
   def set_total(amount, paid_user_id, participants_ids, group_id)
     # 支払ユーザの支払総額に加算
     total = Total.where(group_id: group_id, user_id: paid_user_id).first_or_initialize
@@ -106,5 +119,4 @@ class Api::PaymentsController < ApplicationController
       total.save!
     }
   end
-
 end
