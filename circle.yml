@@ -1,3 +1,7 @@
+machine:
+  ruby:
+    version: 2.2.0
+  timezone: Asia/Tokyo
 database:
   override:
-    - bundle exec rake db:create db:migrate db:seed --trace
+    - bundle exec rake db:create db:migrate --trace
