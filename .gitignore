@@ -27,5 +27,4 @@ config/initializers/secret_token.rb
 .project
 .DS_Store
 .idea
-.secret
-
+.env
