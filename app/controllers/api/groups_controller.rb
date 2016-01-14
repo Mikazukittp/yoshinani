@@ -1,23 +1,52 @@
 class Api::GroupsController < ApplicationController
+  before_action :authenticate!
+  before_action :set_group, only: %i(show update destroy)
 
   def index
-    render json: Group.all, status: :ok
+    render json: @user.groups, status: :ok
   end
 
   def show
-    render json: Group.first, status: :ok
+    render json: @group, status: :ok
   end
 
   def create
-    render json: {}, status: :internal_server_error
+    @group = @user.groups.new(group_params)
+
+    if @group.save
+      render json: @group, status: :ok
+    else
+      render json: {error: "グループの作成に失敗しました"}, status: :internal_server_error
+    end
   end
 
   def update
-    render json: {}, status: :internal_server_error
+    if @group.update(group_params)
+      render json: @group, status: :ok
+    else
+      render json: {error: "グループの更新に失敗しました"}, status: :internal_server_error
+    end
   end
 
   def destroy
-    render json: {}, status: :internal_server_error
+    if @group.destroy
+      render json: @group, status: :ok
+    else
+      render json: {error: "グループの削除に失敗しました"}, status: :internal_server_error
+    end
   end
 
+  private
+
+  def set_group
+    @group = @user.groups.find_by(id: params[:id])
+    unless @group.present?
+      render json: {error: "指定されたIDのグループが見つかりません"}, status: :not_found
+      return
+    end
+  end
+
+  def group_params
+    params.require(:group).permit(:name, :description)
+  end
 end
