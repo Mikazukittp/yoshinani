@@ -1,15 +1,15 @@
 require 'rails_helper'
 
-RSpec.describe 'GroupMembers', type: :request do
+RSpec.describe 'GroupUsers', type: :request do
   let(:sign_in_user) { create(:user, email: 'sign-in-email@example.com', account: 'sign_in_user') }
   let(:env) { { UID: sign_in_user.id, TOKEN: sign_in_user.token } }
   let(:group) { create(:group, name: '幻影旅団', description: '所詮虫けらの戯言、俺の心には響かない') }
 
-  describe 'GET /api/v1/groups/:group_id/members' do
+  describe 'GET /api/v1/groups/:group_id/uesrs' do
     context 'ログインユーザがそのグループに所属している場合' do
       before do
         create(:group_user, user_id: sign_in_user.id, group_id: group.id)
-        get api_group_members_path(group), {}, env
+        get api_group_users_path(group), {}, env
         @json = JSON.parse(response.body)
       end
 
@@ -25,7 +25,7 @@ RSpec.describe 'GroupMembers', type: :request do
 
     context 'ログインユーザがそのグループに所属していなかった場合' do
       before do
-        get api_group_members_path(group), {}, env
+        get api_group_users_path(group), {}, env
         @json = JSON.parse(response.body)
       end
 
@@ -36,7 +36,7 @@ RSpec.describe 'GroupMembers', type: :request do
     end
   end
 
-  describe 'POST /api/v1/groups/:group_id/members' do
+  describe 'POST /api/v1/groups/:group_id/users' do
     let(:user_1) { create(:user, email: 'love-soccer1@example.com', account: 'Neymar') }
     let(:user_2) { create(:user, email: 'love-soccer2@example.com', account: 'Puyol') }
     let(:group_user_params) {{
@@ -49,7 +49,7 @@ RSpec.describe 'GroupMembers', type: :request do
     context 'ログインユーザがそのグループに所属している場合' do
       before do
         create(:group_user, user_id: sign_in_user.id, group_id: group.id)
-        post api_group_members_path(group), group_user_params, env
+        post api_group_users_path(group), group_user_params, env
         @json = JSON.parse(response.body)
       end
 
@@ -65,7 +65,7 @@ RSpec.describe 'GroupMembers', type: :request do
 
     context 'ログインユーザがそのグループに所属していなかった場合' do
       before do
-        get api_group_members_path(group), {}, env
+        get api_group_users_path(group), {}, env
         @json = JSON.parse(response.body)
       end
 

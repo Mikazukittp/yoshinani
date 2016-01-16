@@ -1,4 +1,4 @@
-class Api::GroupMembersController < ApplicationController
+class Api::GroupUsersController < ApplicationController
   before_action :authenticate!
   before_action :set_group
 
