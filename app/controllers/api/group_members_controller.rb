@@ -17,14 +17,16 @@ class Api::GroupMembersController < ApplicationController
   private
 
   def set_group
-    @group = @user.groups.find_by(id: params[:id])
+    @group = @user.groups.find_by(id: params[:group_id])
     unless @group.present?
-      render json: {error: "指定されたIDのグループが見つかりません"}, status: :not_found
+      render json: {error: "指定されたIDのグループが見つかりません"}, status: :bad_request
       return
     end
   end
 
   def group_user_params
-    params.require(:group).permit(:user_id)
+    params.require(:group_user).map do |group_user|
+      group_user.permit(:user_id)
+    end
   end
 end
