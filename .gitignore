@@ -28,3 +28,5 @@ config/initializers/secret_token.rb
 .DS_Store
 .idea
 .env
+.byebug_history
+
