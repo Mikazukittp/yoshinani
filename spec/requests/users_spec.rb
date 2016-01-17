@@ -223,4 +223,26 @@ RSpec.describe 'Users', type: :request do
       end
     end
   end
+
+  describe 'DELETE /api/users/:id/sign_out' do
+    context '正しいパラメータを送った場合' do
+      before do
+        delete sign_out_api_user_path(sign_in_user), {}, env
+        @json = JSON.parse(response.body)
+      end
+
+      example '200が返ってくること' do
+        expect(response).to be_success
+        expect(response.status).to eq 200
+      end
+
+      example '期待したデータが取得されていること' do
+        expect(@json['account']).to eq 'sign_in_user'
+      end
+
+      example 'tokenがnilになっていること' do
+        expect(@json['token']).to be_nil
+      end
+    end
+  end
 end
