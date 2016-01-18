@@ -6,7 +6,9 @@ Rails.application.routes.draw do
           post 'sign_in'
         end
       end
-      resources :groups
+      resources :groups do
+        resources :users, controller: 'group_users', only: %i(index create)
+      end
       resources :payments
     end
   end
