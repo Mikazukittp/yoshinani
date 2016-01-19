@@ -54,6 +54,14 @@ class Api::UsersController < ApplicationController
     end
   end
 
+  def sign_out
+    if @user.update(token: nil)
+      render json: @user, status: :ok
+    else
+      render json: {error: "サインアウトに失敗しました"}, status: :internal_server_error
+    end
+  end
+
   private
 
   def user_params

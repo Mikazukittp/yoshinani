@@ -3,7 +3,11 @@ Rails.application.routes.draw do
     scope :v1 do
       resources :users do
         collection do
-          post 'sign_in'
+          post :sign_in
+        end
+
+        member do
+          delete :sign_out
         end
       end
       resources :groups do
