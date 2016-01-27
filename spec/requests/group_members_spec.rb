@@ -75,4 +75,35 @@ RSpec.describe 'GroupUsers', type: :request do
       end
     end
   end
+
+  describe 'PATCH /api/v1/groups/:group_id/users/accept' do
+    context 'ログインユーザがそのグループに所属している場合' do
+      before do
+        create(:group_user, user_id: sign_in_user.id, group_id: group.id)
+        patch accept_api_group_users_path(group), {}, env
+        @json = JSON.parse(response.body)
+      end
+
+      example '200が返ってくること' do
+        expect(response).to be_success
+        expect(response.status).to eq 200
+      end
+
+      example '期待したデータが取得されていること' do
+        expect(@json['status']).to eq 'active'
+      end
+    end
+
+    context 'ログインユーザがそのグループに所属していなかった場合' do
+      before do
+        patch accept_api_group_users_path(group), {}, env
+        @json = JSON.parse(response.body)
+      end
+
+      example '400が返ってくること' do
+        expect(response).not_to be_success
+        expect(response.status).to eq 400
+      end
+    end
+  end
 end
