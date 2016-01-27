@@ -78,7 +78,8 @@ groups = Group.create([{
 users.each{ |user|
   GroupUser.create([
     group_id: groups[0].id,
-    user_id: user.id
+    user_id: user.id,
+    status: 'active'
   ])
 }
 
