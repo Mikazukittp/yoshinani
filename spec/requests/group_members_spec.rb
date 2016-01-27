@@ -26,7 +26,6 @@ RSpec.describe 'GroupUsers', type: :request do
     context 'ログインユーザがそのグループに所属していなかった場合' do
       before do
         get api_group_users_path(group), {}, env
-        @json = JSON.parse(response.body)
       end
 
       example '400が返ってくること' do
@@ -66,7 +65,6 @@ RSpec.describe 'GroupUsers', type: :request do
     context 'ログインユーザがそのグループに所属していなかった場合' do
       before do
         get api_group_users_path(group), {}, env
-        @json = JSON.parse(response.body)
       end
 
       example '400が返ってくること' do
@@ -101,7 +99,6 @@ RSpec.describe 'GroupUsers', type: :request do
 
       before do
         patch accept_api_group_user_path(group_id: group.id, id: group_user.id), {}, env
-        @json = JSON.parse(response.body)
       end
 
       example '400が返ってくること' do
