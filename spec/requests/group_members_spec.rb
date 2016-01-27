@@ -110,4 +110,33 @@ RSpec.describe 'GroupUsers', type: :request do
       end
     end
   end
+
+  describe 'DELETE /api/v1/groups/:group_id/users/:id' do
+    context 'ログインユーザがそのグループに所属している場合' do
+      let!(:group_user) { create(:group_user, user_id: sign_in_user.id, group_id: group.id) }
+
+      before do
+        delete api_group_user_path(group_id: group.id, id: group_user.id), {}, env
+      end
+
+      example '204が返ってくること' do
+        expect(response).to be_success
+        expect(response.status).to eq 204
+      end
+    end
+
+    context 'ログインユーザがそのグループに所属していなかった場合' do
+      let(:user_1) { create(:user, email: 'love-soccer1@example.com', account: 'Neymar') }
+      let!(:group_user) { create(:group_user, user_id: user_1.id, group_id: group.id) }
+
+      before do
+        delete api_group_user_path(group_id: group.id, id: group_user.id), {}, env
+      end
+
+      example '400が返ってくること' do
+        expect(response).not_to be_success
+        expect(response.status).to eq 400
+      end
+    end
+  end
 end
