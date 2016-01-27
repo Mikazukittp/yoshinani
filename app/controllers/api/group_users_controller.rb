@@ -19,7 +19,7 @@ class Api::GroupUsersController < ApplicationController
     if @group_user.destroy
       render json: @group_user, status: :no_content
     else
-      render json: {error: "グループのに失敗しました"}, status: :internal_server_error
+      render json: {error: "グループの退会に失敗しました"}, status: :internal_server_error
     end
   end
 
