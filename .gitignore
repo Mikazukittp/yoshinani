@@ -29,4 +29,5 @@ config/initializers/secret_token.rb
 .idea
 .env
 .byebug_history
+.ruby-version
 
