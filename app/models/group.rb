@@ -4,6 +4,10 @@ class Group < ActiveRecord::Base
   has_many :payments
 
   def as_json(options={})
-    super include: :users
+    super methods: :include_users
+  end
+
+  def include_users
+    users.as_json(group_id: self.id)
   end
 end

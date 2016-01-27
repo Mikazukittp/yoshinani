@@ -20,7 +20,9 @@ class User < ActiveRecord::Base
   before_create :new_token
 
   def as_json(options={})
-    super except: [:password, :salt], methods: :totals
+    super(except: [:password, :salt]).tap do |json|
+      json[:totals] = include_totals(options[:group_id].presence)
+    end
   end
 
   # 認証を行う
@@ -42,6 +44,10 @@ class User < ActiveRecord::Base
   end
 
   private
+
+  def include_totals(group_id)
+    group_id.present? ? totals.where(group_id: group_id) : totals
+  end
 
   # パスワードを暗号化する
   def self.crypt_password(password, salt)
