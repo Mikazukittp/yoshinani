@@ -11,8 +11,8 @@ Rails.application.routes.draw do
         end
       end
       resources :groups do
-        resources :users, controller: 'group_users', only: %i(index create) do
-          collection do
+        resources :users, controller: 'group_users', only: %i(index create destroy) do
+          member do
             patch :accept
           end
         end

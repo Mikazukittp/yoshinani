@@ -78,9 +78,10 @@ RSpec.describe 'GroupUsers', type: :request do
 
   describe 'PATCH /api/v1/groups/:group_id/users/accept' do
     context 'ログインユーザがそのグループに所属している場合' do
+      let!(:group_user) { create(:group_user, user_id: sign_in_user.id, group_id: group.id) }
+
       before do
-        create(:group_user, user_id: sign_in_user.id, group_id: group.id)
-        patch accept_api_group_users_path(group), {}, env
+        patch accept_api_group_user_path(group_id: group.id, id: group_user.id), {}, env
         @json = JSON.parse(response.body)
       end
 
@@ -95,8 +96,11 @@ RSpec.describe 'GroupUsers', type: :request do
     end
 
     context 'ログインユーザがそのグループに所属していなかった場合' do
+      let(:user_1) { create(:user, email: 'love-soccer1@example.com', account: 'Neymar') }
+      let!(:group_user) { create(:group_user, user_id: user_1.id, group_id: group.id) }
+
       before do
-        patch accept_api_group_users_path(group), {}, env
+        patch accept_api_group_user_path(group_id: group.id, id: group_user.id), {}, env
         @json = JSON.parse(response.body)
       end
 
