@@ -20,6 +20,7 @@ RSpec.describe 'GroupUsers', type: :request do
 
       example '期待したデータの一覧が取得されていること' do
         expect(@json[0]['email']).to eq 'sign-in-email@example.com'
+        expect(@json[0]['totals']).not_to be_nil
       end
     end
 

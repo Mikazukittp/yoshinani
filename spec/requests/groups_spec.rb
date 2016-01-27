@@ -20,6 +20,7 @@ RSpec.describe 'Groups', type: :request do
 
       example '期待したデータの一覧が取得されていること' do
         expect(@json[0]['name']).to eq '幻影旅団'
+        expect(@json[0]['users'][0]['account']).to eq 'sign_in_user'
       end
     end
 
@@ -55,6 +56,7 @@ RSpec.describe 'Groups', type: :request do
 
       example '期待したデータが取得されていること' do
         expect(@json['name']).to eq '幻影旅団'
+        expect(@json['users'][0]['account']).to eq 'sign_in_user'
       end
     end
 
