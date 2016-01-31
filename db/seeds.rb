@@ -73,7 +73,11 @@ users = User.create([
 groups = Group.create([{
   name: "研修1G",
   description: "俺らのグループ"
-}])
+}, {
+  name: "研修2G",
+  description: "君らのグループ"
+  }
+])
 
 users.each{ |user|
   GroupUser.create([
