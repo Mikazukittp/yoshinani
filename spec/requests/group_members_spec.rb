@@ -7,8 +7,14 @@ RSpec.describe 'GroupUsers', type: :request do
 
   describe 'GET /api/v1/groups/:group_id/uesrs' do
     context 'ログインユーザがそのグループに所属している場合' do
+      let(:group2) { create(:group, name: '陰獣', description: '餅は餅屋') }
+
       before do
         create(:group_user, user_id: sign_in_user.id, group_id: group.id)
+        create(:group_user, user_id: sign_in_user.id, group_id: group2.id)
+        create(:total, user_id: sign_in_user.id, group_id: group.id)
+        create(:total, user_id: sign_in_user.id, group_id: group2.id)
+
         get api_group_users_path(group), {}, env
         @json = JSON.parse(response.body)
       end
@@ -20,7 +26,10 @@ RSpec.describe 'GroupUsers', type: :request do
 
       example '期待したデータの一覧が取得されていること' do
         expect(@json[0]['email']).to eq 'sign-in-email@example.com'
-        expect(@json[0]['totals']).not_to be_nil
+      end
+
+      example '指定したgroup以外のtotalが取得されていないこと' do
+        expect(@json[0]['totals'].size).to eq 1
       end
     end
 

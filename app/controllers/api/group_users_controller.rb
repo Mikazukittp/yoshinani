@@ -4,7 +4,7 @@ class Api::GroupUsersController < ApplicationController
   before_action :set_group_user, only: %i(accept destroy)
 
   def index
-    render json: @group.users, status: :ok
+    render json: @group.users.as_json(group_id: @group.id), status: :ok
   end
 
   def create
