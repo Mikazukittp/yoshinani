@@ -13,7 +13,7 @@ set :deploy_to, '/var/www/html/yoshinani'
 # Default value for :scm is :git
 set :scm, :git
 
-set :branch, fetch(:branch, "master")
+set :branch, ENV['BRANCH'] || "master"
 
 set :rbenv_type, :user # :system or :user
 set :rbenv_ruby, '2.2.2'
