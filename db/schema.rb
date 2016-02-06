@@ -11,13 +11,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150814093833) do
+ActiveRecord::Schema.define(version: 20160125122813) do
 
   create_table "group_users", force: true do |t|
     t.integer  "group_id"
     t.integer  "user_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "role",       default: "member",   null: false
+    t.string   "status",     default: "inviting", null: false
   end
 
   add_index "group_users", ["group_id"], name: "index_group_users_on_group_id", using: :btree

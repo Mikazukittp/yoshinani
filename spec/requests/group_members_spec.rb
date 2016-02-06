@@ -7,8 +7,14 @@ RSpec.describe 'GroupUsers', type: :request do
 
   describe 'GET /api/v1/groups/:group_id/uesrs' do
     context 'ログインユーザがそのグループに所属している場合' do
+      let(:group2) { create(:group, name: '陰獣', description: '餅は餅屋') }
+
       before do
         create(:group_user, user_id: sign_in_user.id, group_id: group.id)
+        create(:group_user, user_id: sign_in_user.id, group_id: group2.id)
+        create(:total, user_id: sign_in_user.id, group_id: group.id)
+        create(:total, user_id: sign_in_user.id, group_id: group2.id)
+
         get api_group_users_path(group), {}, env
         @json = JSON.parse(response.body)
       end
@@ -21,12 +27,15 @@ RSpec.describe 'GroupUsers', type: :request do
       example '期待したデータの一覧が取得されていること' do
         expect(@json[0]['email']).to eq 'sign-in-email@example.com'
       end
+
+      example '指定したgroup以外のtotalが取得されていないこと' do
+        expect(@json[0]['totals'].size).to eq 1
+      end
     end
 
     context 'ログインユーザがそのグループに所属していなかった場合' do
       before do
         get api_group_users_path(group), {}, env
-        @json = JSON.parse(response.body)
       end
 
       example '400が返ってくること' do
@@ -66,7 +75,69 @@ RSpec.describe 'GroupUsers', type: :request do
     context 'ログインユーザがそのグループに所属していなかった場合' do
       before do
         get api_group_users_path(group), {}, env
+      end
+
+      example '400が返ってくること' do
+        expect(response).not_to be_success
+        expect(response.status).to eq 400
+      end
+    end
+  end
+
+  describe 'PATCH /api/v1/groups/:group_id/users/accept' do
+    context 'ログインユーザがそのグループに所属している場合' do
+      let!(:group_user) { create(:group_user, user_id: sign_in_user.id, group_id: group.id) }
+
+      before do
+        patch accept_api_group_user_path(group_id: group.id, id: group_user.id), {}, env
         @json = JSON.parse(response.body)
+      end
+
+      example '200が返ってくること' do
+        expect(response).to be_success
+        expect(response.status).to eq 200
+      end
+
+      example '期待したデータが取得されていること' do
+        expect(@json['status']).to eq 'active'
+      end
+    end
+
+    context 'ログインユーザがそのグループに所属していなかった場合' do
+      let(:user_1) { create(:user, email: 'love-soccer1@example.com', account: 'Neymar') }
+      let!(:group_user) { create(:group_user, user_id: user_1.id, group_id: group.id) }
+
+      before do
+        patch accept_api_group_user_path(group_id: group.id, id: group_user.id), {}, env
+      end
+
+      example '400が返ってくること' do
+        expect(response).not_to be_success
+        expect(response.status).to eq 400
+      end
+    end
+  end
+
+  describe 'DELETE /api/v1/groups/:group_id/users/:id' do
+    context 'ログインユーザがそのグループに所属している場合' do
+      let!(:group_user) { create(:group_user, user_id: sign_in_user.id, group_id: group.id) }
+
+      before do
+        delete api_group_user_path(group_id: group.id, id: group_user.id), {}, env
+      end
+
+      example '204が返ってくること' do
+        expect(response).to be_success
+        expect(response.status).to eq 204
+      end
+    end
+
+    context 'ログインユーザがそのグループに所属していなかった場合' do
+      let(:user_1) { create(:user, email: 'love-soccer1@example.com', account: 'Neymar') }
+      let!(:group_user) { create(:group_user, user_id: user_1.id, group_id: group.id) }
+
+      before do
+        delete api_group_user_path(group_id: group.id, id: group_user.id), {}, env
       end
 
       example '400が返ってくること' do
