@@ -62,6 +62,13 @@ class Api::UsersController < ApplicationController
     end
   end
 
+  def search
+    user = User.find_by(account: params[:account])
+    user = {} if user.nil?
+
+    render json: user
+  end
+
   private
 
   def user_params
