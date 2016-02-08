@@ -245,4 +245,40 @@ RSpec.describe 'Users', type: :request do
       end
     end
   end
+
+  describe 'GET /api/users/search' do
+    context 'accuntが存在する場合' do
+      before do
+        create(:user, email: 'love-soccer1@example.com', account: 'Neymar')
+        get search_api_users_path, {account: 'Neymar'}, env
+        @json = JSON.parse(response.body)
+      end
+
+      example '200が返ってくること' do
+        expect(response).to be_success
+        expect(response.status).to eq 200
+      end
+
+      example '期待したデータの一覧が取得されていること' do
+        expect(@json['email']).to eq 'love-soccer1@example.com'
+      end
+    end
+
+    context 'accuntが存在しない場合' do
+      before do
+        create(:user, email: 'love-soccer1@example.com', account: 'Neymar')
+        get search_api_users_path, {account: 'NeymarJr'}, env
+        @json = JSON.parse(response.body)
+      end
+
+      example '200が返ってくること' do
+        expect(response).to be_success
+        expect(response.status).to eq 200
+      end
+
+      example '空のjsonが取得されること' do
+        expect(@json).to be_empty
+      end
+    end
+  end
 end

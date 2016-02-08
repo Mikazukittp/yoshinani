@@ -4,6 +4,7 @@ Rails.application.routes.draw do
       resources :users do
         collection do
           post :sign_in
+          get  :search
         end
 
         member do
