@@ -22,6 +22,7 @@ class User < ActiveRecord::Base
   def as_json(options={})
     super(except: [:password, :salt]).tap do |json|
       json[:totals] = include_totals(options[:group_id].presence)
+      json[:group_users] = include_group_users(options[:group_id].presence)
     end
   end
 
@@ -47,6 +48,10 @@ class User < ActiveRecord::Base
 
   def include_totals(group_id)
     group_id.present? ? totals.where(group_id: group_id) : totals
+  end
+
+  def include_group_users(group_id)
+    group_id.present? ? group_users.where(group_id: group_id) : group_users
   end
 
   # パスワードを暗号化する

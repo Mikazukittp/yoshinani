@@ -69,8 +69,10 @@ RSpec.describe 'Users', type: :request do
 
   describe 'GET /api/users/:id' do
     let(:user) { create(:user, username: 'goroumaru') }
+    let(:group) { create(:group) }
 
     before do
+      create(:group_user, user_id: user.id, group_id: group.id)
       get api_user_path(user), {}, env
       @json = JSON.parse(response.body)
     end
@@ -82,6 +84,7 @@ RSpec.describe 'Users', type: :request do
 
     example '期待したデータが取得されていること' do
       expect(@json['username']).to eq 'goroumaru'
+      expect(@json['group_users'][0]['status']).to eq 'inviting'
     end
   end
 
