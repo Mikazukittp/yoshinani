@@ -12,8 +12,7 @@ class Api::UsersController < ApplicationController
   end
 
   def show
-    p @user.as_json(include: :group_users)
-    render json: @user.to_json(include: :group_users), status: :ok
+    render json: @user, status: :ok
   end
 
   def create
