@@ -14,7 +14,9 @@ class Api::GroupsController < ApplicationController
     @group = @user.groups.new(group_params)
 
     if @group.save
-      render json: @group, status: :ok
+      if @group.group_users.create({group_id: @group.id, user_id: @user.id, status: 'active'})
+        render json: @group, status: :ok
+      end
     else
       render json: {error: "グループの作成に失敗しました"}, status: :internal_server_error
     end
