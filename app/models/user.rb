@@ -20,6 +20,7 @@ class User < ActiveRecord::Base
   before_create :new_token
 
   def as_json(options={})
+    # Groupの子として表示する際は無限Loopにならないように、Groupsを表示しない
     methods = options[:group_id].present? ? [] : [:active_group, :invited_group]
     super(except: [:password, :salt], methods: methods).tap do |json|
       json[:totals] = include_totals(options[:group_id].presence)
