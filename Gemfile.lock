@@ -1,3 +1,12 @@
+GIT
+  remote: https://github.com/pranavpr/swagger-docs.git
+  revision: 6574d9fd6ca6de5cbe04a396eebd6e7b93b940ca
+  branch: fix-missing-slashes
+  specs:
+    swagger-docs (0.1.10)
+      activesupport (>= 3, < 5)
+      rails (>= 3, < 5)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -270,7 +279,11 @@ DEPENDENCIES
   sdoc (~> 0.4.0)
   simplecov
   spring
+<<<<<<< dbdb0412abb56ef4617c9190a4a4ad63205d224e
   squeel
+=======
+  swagger-docs!
+>>>>>>> install swagger
   therubyracer
   thor
   turbolinks

@@ -15,6 +15,7 @@ gem "squeel"
 gem 'sdoc', '~> 0.4.0',          group: :doc
 gem 'devise'
 gem 'rails_admin'
+gem 'swagger-docs', :git => 'https://github.com/pranavpr/swagger-docs.git', :branch => 'fix-missing-slashes'
 
 group :production do
   gem 'therubyracer'
