@@ -20,9 +20,9 @@ class User < ActiveRecord::Base
   before_create :new_token
 
   def as_json(options={})
-    super(except: [:password, :salt]).tap do |json|
+    methods = options[:group_id].present? ? [] : [:active_group, :invited_group]
+    super(except: [:password, :salt], methods: methods).tap do |json|
       json[:totals] = include_totals(options[:group_id].presence)
-      json[:group_users] = include_group_users(options[:group_id].presence)
     end
   end
 
@@ -44,15 +44,20 @@ class User < ActiveRecord::Base
     self.token = s[0, 32]
   end
 
+  def active_group()
+    groups.includes(:group_users).where(group_users: {status: 'active'})
+  end
+
+  def invited_group()
+    groups.includes(:group_users).where(group_users: {status: 'inviting'})
+  end
+
   private
 
   def include_totals(group_id)
     group_id.present? ? totals.where(group_id: group_id) : totals
   end
 
-  def include_group_users(group_id)
-    group_id.present? ? group_users.where(group_id: group_id) : group_users
-  end
 
   # パスワードを暗号化する
   def self.crypt_password(password, salt)
