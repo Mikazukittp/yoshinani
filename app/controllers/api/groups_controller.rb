@@ -11,14 +11,18 @@ class Api::GroupsController < ApplicationController
   end
 
   def create
-    @group = @user.groups.new(group_params)
+    begin
+      @group = @user.groups.new(group_params)
 
-    if @group.save
-      if @group.group_users.create({group_id: @group.id, user_id: @user.id, status: 'active'})
-        render json: @group, status: :ok
+      ActiveRecord::Base.transaction do
+        @group.save!
+        @group.group_users.create!(user_id: @user.id, status: 'active')
       end
-    else
-      render json: {error: "グループの作成に失敗しました"}, status: :internal_server_error
+
+      render json: @group, status: :ok
+
+    rescue ActiveRecord::RecordInvalid => invalid
+      render json: invalid.record.errors.full_messages, status: :internal_server_error
     end
   end
 
