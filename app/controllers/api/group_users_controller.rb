@@ -1,7 +1,7 @@
 class Api::GroupUsersController < ApplicationController
   before_action :authenticate!
   before_action :set_group
-  before_action :set_group_user, only: %i(destroy)
+  before_action :set_group_user, only: %i(accept destroy)
 
   def index
     render json: @group.users.as_json(group_id: @group.id), status: :ok
@@ -24,8 +24,8 @@ class Api::GroupUsersController < ApplicationController
   end
 
   def accept
-    if @group.group_users.first.update(status: 'active')
-      render json: @group.group_users.first, status: :ok
+    if @group_user.update(status: 'active')
+      render json: @group_user, status: :ok
     else
       render json: {error: "グループの参加に失敗しました"}, status: :internal_server_error
     end
@@ -42,7 +42,9 @@ class Api::GroupUsersController < ApplicationController
   end
 
   def set_group_user
-    @group_user = @group.group_users.find_by(user_id: params[:id])
+    user_id = params[:id] ? params[:id] : @user.id
+
+    @group_user = @group.group_users.find_by(user_id: user_id)
     unless @group_user.present?
       render json: {error: "グループユーザが見つかりません"}, status: :bad_request
       return
