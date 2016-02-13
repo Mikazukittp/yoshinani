@@ -3,6 +3,8 @@ class Group < ActiveRecord::Base
   has_many :users, through: :group_users
   has_many :payments
 
+  validates :name, presence: true
+
   def as_json(options={})
     super methods: :users_with_totals
   end
