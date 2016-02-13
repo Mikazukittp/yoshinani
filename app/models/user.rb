@@ -1,5 +1,8 @@
 require 'digest/md5'
+
 class User < ActiveRecord::Base
+  VALID_EMAIL_REGEX =  /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
+
   has_many :group_users
   has_many :groups, through: :group_users
 
@@ -9,11 +12,10 @@ class User < ActiveRecord::Base
   has_many :to_pay_payments, class_name: 'Payment', through: :participants, source: :payment
 
   # validation
-  VALID_EMAIL_REGEX =  /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
-  validates :account, presence: true, uniqueness: true
-  validates :username, presence: true
-  validates :email, presence: true, format: { with: VALID_EMAIL_REGEX }, uniqueness: true
-  validates :password, presence: true
+  validates :account, presence: true, uniqueness: true, length: {maximum: 30}
+  validates :username, presence: true, length: {maximum: 30}
+  validates :email, presence: true, format: { with: VALID_EMAIL_REGEX }, uniqueness: true, length: {maximum: 256}
+  validates :password, presence: true, length: {minimum: 7, maximum: 20}
   validates :role, numericality: { only_integer: true }
 
   before_create :hash_password
@@ -59,7 +61,6 @@ class User < ActiveRecord::Base
   def include_totals(group_id)
     group_id.present? ? totals.where(group_id: group_id) : totals
   end
-
 
   # パスワードを暗号化する
   def self.crypt_password(password, salt)
