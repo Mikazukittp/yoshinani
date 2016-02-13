@@ -20,9 +20,11 @@ class User < ActiveRecord::Base
   before_create :new_token
 
   def as_json(options={})
-    super(except: [:password, :salt]).tap do |json|
+    # Groupの子として表示する際は無限Loopにならないように、Groupsを表示しない
+    methods = options[:group_id].present? ? [] : %i(active_groups invited_groups)
+
+    super(except: [:password, :salt], methods: methods).tap do |json|
       json[:totals] = include_totals(options[:group_id].presence)
-      json[:group_users] = include_group_users(options[:group_id].presence)
     end
   end
 
@@ -44,15 +46,20 @@ class User < ActiveRecord::Base
     self.token = s[0, 32]
   end
 
+  def active_groups()
+    groups.includes(:group_users).where(group_users: {status: 'active'}).as_json(user_id: self.id)
+  end
+
+  def invited_groups()
+    groups.includes(:group_users).where(group_users: {status: 'inviting'}).as_json(user_id: self.id)
+  end
+
   private
 
   def include_totals(group_id)
     group_id.present? ? totals.where(group_id: group_id) : totals
   end
 
-  def include_group_users(group_id)
-    group_id.present? ? group_users.where(group_id: group_id) : group_users
-  end
 
   # パスワードを暗号化する
   def self.crypt_password(password, salt)

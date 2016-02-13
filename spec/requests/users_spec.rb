@@ -84,7 +84,7 @@ RSpec.describe 'Users', type: :request do
 
     example '期待したデータが取得されていること' do
       expect(@json['username']).to eq 'goroumaru'
-      expect(@json['group_users'][0]['status']).to eq 'inviting'
+      expect(@json['invited_groups'][0]).not_to be_empty
     end
   end
 
