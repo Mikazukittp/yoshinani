@@ -89,7 +89,7 @@ RSpec.describe 'GroupUsers', type: :request do
       let!(:group_user) { create(:group_user, user_id: sign_in_user.id, group_id: group.id) }
 
       before do
-        patch accept_api_group_user_path(group_id: group.id, id: group_user.id), {}, env
+        patch accept_api_group_users_path(group_id: group.id), {}, env
         @json = JSON.parse(response.body)
       end
 
@@ -108,7 +108,7 @@ RSpec.describe 'GroupUsers', type: :request do
       let!(:group_user) { create(:group_user, user_id: user_1.id, group_id: group.id) }
 
       before do
-        patch accept_api_group_user_path(group_id: group.id, id: group_user.id), {}, env
+        patch accept_api_group_users_path(group_id: group.id, id: group_user.id), {}, env
       end
 
       example '400が返ってくること' do
@@ -123,7 +123,7 @@ RSpec.describe 'GroupUsers', type: :request do
       let!(:group_user) { create(:group_user, user_id: sign_in_user.id, group_id: group.id) }
 
       before do
-        delete api_group_user_path(group_id: group.id, id: group_user.id), {}, env
+        delete api_group_user_path(group_id: group.id, id: sign_in_user.id), {}, env
       end
 
       example '204が返ってくること' do
@@ -137,7 +137,7 @@ RSpec.describe 'GroupUsers', type: :request do
       let!(:group_user) { create(:group_user, user_id: user_1.id, group_id: group.id) }
 
       before do
-        delete api_group_user_path(group_id: group.id, id: group_user.id), {}, env
+        delete api_group_user_path(group_id: group.id, id: sign_in_user.id), {}, env
       end
 
       example '400が返ってくること' do
