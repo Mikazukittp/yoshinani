@@ -4,7 +4,7 @@ class GroupUser < ActiveRecord::Base
 
   validates :group_id, presence: true
   validates :user_id, presence: true
-  validate :composite_primary_key
+  validate :composite_primary_key, on: :create
 
   private
 
