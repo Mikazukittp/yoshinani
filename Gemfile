@@ -9,6 +9,7 @@ gem 'jquery-rails'
 gem 'turbolinks'
 gem 'dotenv-rails'
 gem 'jbuilder', '~> 2.0'
+gem 'date_validator'
 gem 'sdoc', '~> 0.4.0',          group: :doc
 
 group :production do
