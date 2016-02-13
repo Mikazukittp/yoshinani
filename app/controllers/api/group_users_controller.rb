@@ -33,18 +33,20 @@ class Api::GroupUsersController < ApplicationController
 
   private
 
-  def set_group_user
-    @group_user = @user.group_users.find_by(id: params[:id])
-    unless @group_user.present?
-      render json: {error: "指定されたIDのグループユーザが見つかりません"}, status: :bad_request
-      return
-    end
-  end
-
   def set_group
     @group = @user.groups.find_by(id: params[:group_id])
     unless @group.present?
       render json: {error: "指定されたIDのグループが見つかりません"}, status: :bad_request
+      return
+    end
+  end
+
+  def set_group_user
+    user_id = params[:id] ? params[:id] : @user.id
+
+    @group_user = @group.group_users.find_by(user_id: user_id)
+    unless @group_user.present?
+      render json: {error: "グループユーザが見つかりません"}, status: :bad_request
       return
     end
   end
