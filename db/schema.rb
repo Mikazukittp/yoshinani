@@ -22,8 +22,7 @@ ActiveRecord::Schema.define(version: 20160125122813) do
     t.string   "status",     default: "inviting", null: false
   end
 
-  add_index "group_users", ["group_id"], name: "index_group_users_on_group_id", using: :btree
-  add_index "group_users", ["user_id"], name: "index_group_users_on_user_id", using: :btree
+  add_index "group_users", [:group_id, :user_id], name: "composite_primary_key_group_users", using: :btree, unique: true
 
   create_table "groups", force: true do |t|
     t.string   "name"

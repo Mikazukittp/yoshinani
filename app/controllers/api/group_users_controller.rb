@@ -8,10 +8,14 @@ class Api::GroupUsersController < ApplicationController
   end
 
   def create
-    if @group.group_users.create(group_user_params)
+    # FIXME: paramを既存仕様に合わせているので、一旦こんなにイケてない形にしています...
+    # 思い切ってI/Fを変えてもいいかも？
+    @group_user = GroupUser.new(group_user_params.first.merge({group_id: @group.id}))
+
+    if @group_user.save
       render json: @group, status: :ok
     else
-      render json: {error: "メンバーの追加に失敗しました"}, status: :internal_server_error
+      render json: {message: "メンバーの追加に失敗しました", errors: @group_user.errors.full_messages}, status: :internal_server_error
     end
   end
 
