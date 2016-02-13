@@ -6,10 +6,16 @@ class Group < ActiveRecord::Base
   validates :name, presence: true
 
   def as_json(options={})
-    super methods: :users_with_totals
+    methods = options[:user_id].present? ? [] : %i(active_users invited_users)
+
+    super methods: methods
   end
 
-  def users_with_totals
-    users.as_json(group_id: self.id)
+  def active_users()
+    users.includes(:group_users).where(group_users: {status: 'active'}).as_json(group_id: self.id)
+  end
+
+  def invited_users()
+    users.includes(:group_users).where(group_users: {status: 'inviting'}).as_json(group_id: self.id)
   end
 end

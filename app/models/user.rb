@@ -21,7 +21,8 @@ class User < ActiveRecord::Base
 
   def as_json(options={})
     # Groupの子として表示する際は無限Loopにならないように、Groupsを表示しない
-    methods = options[:group_id].present? ? [] : [:active_groups, :invited_groups]
+    methods = options[:group_id].present? ? [] : %i(active_groups invited_groups)
+
     super(except: [:password, :salt], methods: methods).tap do |json|
       json[:totals] = include_totals(options[:group_id].presence)
     end
@@ -46,11 +47,11 @@ class User < ActiveRecord::Base
   end
 
   def active_groups()
-    groups.includes(:group_users).where(group_users: {status: 'active'})
+    groups.includes(:group_users).where(group_users: {status: 'active'}).as_json(user_id: self.id)
   end
 
   def invited_groups()
-    groups.includes(:group_users).where(group_users: {status: 'inviting'})
+    groups.includes(:group_users).where(group_users: {status: 'inviting'}).as_json(user_id: self.id)
   end
 
   private
