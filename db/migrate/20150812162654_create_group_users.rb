@@ -1,8 +1,8 @@
 class CreateGroupUsers < ActiveRecord::Migration
   def change
     create_table :group_users do |t|
-      t.references :group, index: true
-      t.references :user, index: true
+      t.references :group
+      t.references :user
 
       t.timestamps
     end

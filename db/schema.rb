@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160125122813) do
+ActiveRecord::Schema.define(version: 20160213085241) do
 
   create_table "group_users", force: true do |t|
     t.integer  "group_id"
@@ -22,7 +22,7 @@ ActiveRecord::Schema.define(version: 20160125122813) do
     t.string   "status",     default: "inviting", null: false
   end
 
-  add_index "group_users", [:group_id, :user_id], name: "composite_primary_key_group_users", using: :btree, unique: true
+  add_index "group_users", ["user_id", "group_id"], name: "index_group_users_on_user_id_and_group_id", unique: true, using: :btree
 
   create_table "groups", force: true do |t|
     t.string   "name"
