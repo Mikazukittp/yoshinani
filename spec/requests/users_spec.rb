@@ -194,6 +194,39 @@ RSpec.describe 'Users', type: :request do
       end
     end
 
+    context '前後に空白を含むaccountを送った場合' do
+      before do
+        post sign_in_api_users_path, { account: '  deikun_char  ', password: 'password1!' }
+        @json = JSON.parse(response.body)
+      end
+
+      example '200が返ってくること' do
+        expect(response).to be_success
+        expect(response.status).to eq 200
+      end
+
+      example '期待したデータが取得されていること' do
+        expect(@json['account']).to eq 'deikun_char'
+      end
+    end
+
+    context '前後に空白を含むpasswordを送った場合' do
+      before do
+
+        post sign_in_api_users_path, { account: 'deikun_char', password: '  password1!  ' }
+        @json = JSON.parse(response.body)
+      end
+
+      example '200が返ってくること' do
+        expect(response).to be_success
+        expect(response.status).to eq 200
+      end
+
+      example '期待したデータが取得されていること' do
+        expect(@json['account']).to eq 'deikun_char'
+      end
+    end
+
     context '不正なパラメータ(account)を送った場合' do
       before do
         post sign_in_api_users_path, { account: 'nise_char', password: 'password1!' }

@@ -162,4 +162,16 @@ RSpec.describe User do
       end
     end
   end
+
+  describe 'trim space account and password' do
+    describe '#account' do
+      let(:user) { create(:user, account: '  space man  ') }
+
+      it { expect(user.account).to eq 'space man' }
+    end
+
+    # TODO 途中でハッシュ化の処理を挟むのでfeature testの方に書く
+    describe '#password' do
+    end
+  end
 end
