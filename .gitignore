@@ -20,6 +20,9 @@
 # Comment out these rules if you are OK with secrets being uploaded to the repo
 config/initializers/secret_token.rb
 
+# Ignore seed file
+db/seeds.rb
+
 # Ignore other unneeded files.
 # doc/
 *.swp
