@@ -8,11 +8,20 @@ class Api::GroupUsersController < ApplicationController
   end
 
   def create
-    if @group.group_users.create(group_user_params)
-      render json: @group, status: :ok
-    else
-      render json: {error: "メンバーの追加に失敗しました"}, status: :internal_server_error
+    @group_users = @group.group_users.new(group_user_params)
+
+    ActiveRecord::Base.transaction do
+      @group_users.each do |group_user|
+        @group_user = group_user
+
+        @group_user.save!
+      end
     end
+
+    render json: @group, status: :ok
+
+    rescue ActiveRecord::RecordInvalid => invalid
+      render json: {message: "メンバーの追加に失敗しました", errors: @group_user.errors.full_messages}, status: :internal_server_error
   end
 
   def destroy

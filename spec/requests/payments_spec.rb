@@ -194,7 +194,6 @@ RSpec.describe 'Users', type: :request do
       }
 
       before do
-        create(:group_user, user_id: sign_in_user.id, group_id: group.id)
         create(:total, paid: 200000, user_id: sign_in_user.id, group_id: group.id)
 
         patch api_payment_path(payment), payment_params, env
@@ -218,8 +217,6 @@ RSpec.describe 'Users', type: :request do
       let!(:payment) { create(:payment, event: '天下一武道会', paid_user_id: user_1.id, group_id: group.id) }
 
       before do
-        create(:group_user, user_id: sign_in_user.id, group_id: group.id)
-
         patch api_payment_path(payment), {payment: {event: '銀河一武道会'}}, env
         @json = JSON.parse(response.body)
       end
