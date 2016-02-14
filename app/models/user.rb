@@ -22,6 +22,10 @@ class User < ActiveRecord::Base
   before_create :hash_password
   before_create :new_token
 
+  def account=(value)
+    write_attribute(:account, value.try!(:strip))
+  end
+
   def as_json(options={})
     # Groupの子として表示する際は無限Loopにならないように、Groupsを表示しない
     methods = options[:group_id].present? ? [] : %i(active_groups invited_groups)
@@ -40,7 +44,7 @@ class User < ActiveRecord::Base
   # saltと暗号化されたパスワードを生成
   def hash_password
     self.salt = User.new_salt
-    self.password = User.crypt_password(self.password, self.salt)
+    self.password = User.crypt_password(self.password.strip, self.salt)
   end
 
   # tokenの新規作成
