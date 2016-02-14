@@ -39,13 +39,13 @@ class Api::UsersController < ApplicationController
 
   def sign_in
     #usernameとpasswordを受け取って、正しければ、tokenを再生成して、DBに上書く&返す
-    @user = User.find_by(account: params[:account])
+    @user = User.find_by(account: params[:account].strip)
     if @user.blank?
       render json: {error: "アカウント名かパスワードが正しくありません"}, status: :unauthorized
       return
     end
 
-    if @user.authoricate(params[:password])
+    if @user.authoricate(params[:password].strip)
       @user.new_token
       @user.save!
       render json: @user, status: :ok
