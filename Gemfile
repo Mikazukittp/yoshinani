@@ -30,6 +30,7 @@ group :development do
   gem 'letter_opener'
   gem "turnip"
   gem 'bullet'
+  gem 'capistrano-slackify'
 end
 
 group :test do
