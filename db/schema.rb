@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160213085241) do
+ActiveRecord::Schema.define(version: 20160216145654) do
 
   create_table "group_users", force: true do |t|
     t.integer  "group_id"
@@ -51,6 +51,7 @@ ActiveRecord::Schema.define(version: 20160213085241) do
     t.datetime "updated_at"
     t.integer  "group_id"
     t.boolean  "is_repayment", default: false
+    t.date     "deleted_at"
   end
 
   add_index "payments", ["group_id"], name: "index_payments_on_group_id", using: :btree
