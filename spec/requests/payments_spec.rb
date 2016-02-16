@@ -221,9 +221,9 @@ RSpec.describe 'Users', type: :request do
         @json = JSON.parse(response.body)
       end
 
-      example '401が返ってくること' do
+      example '403が返ってくること' do
         expect(response).not_to be_success
-        expect(response.status).to eq 401
+        expect(response.status).to eq 403
       end
     end
   end

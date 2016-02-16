@@ -36,7 +36,7 @@ class Api::PaymentsController < ApplicationController
 
   def update
     unless @payment.paid_user.id == @user.id
-      render json: {errors: "権限のない操作です"}, status: :unauthorized
+      render json: {errors: "権限のない操作です"}, status: :forbidden
       return
     end
 
