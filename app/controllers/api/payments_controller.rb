@@ -1,6 +1,6 @@
 class Api::PaymentsController < ApplicationController
   before_action :authenticate!
-  before_action :set_payment, only: %i(show update)
+  before_action :set_payment, only: %i(show update destroy)
   before_action :set_group, only: %i(index)
 
   def index
@@ -36,7 +36,7 @@ class Api::PaymentsController < ApplicationController
 
   def update
     unless @payment.paid_user.id == @user.id
-      render json: {errors: "権限のない操作です"}, status: :unauthorized
+      render json: {errors: "権限のない操作です"}, status: :forbidden
       return
     end
 
@@ -75,7 +75,16 @@ class Api::PaymentsController < ApplicationController
   end
 
   def destroy
-    render json: {}, status: :internal_server_error
+    unless @payment.paid_user.id == @user.id
+      render json: {errors: "権限のない操作です"}, status: :forbidden
+      return
+    end
+
+    if @payment.update(deleted_at: Time.now)
+      render json: @payment, status: :ok
+    else
+      render json: {errors: "精算の削除に失敗しました"}, status: :internal_server_error
+    end
   end
 
   private
