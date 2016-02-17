@@ -4,7 +4,9 @@ class Api::PaymentsController < ApplicationController
   before_action :set_group, only: %i(index)
 
   def index
-    @payments = @group.payments.order(date: :desc, created_at: :desc)
+    payment = Payment.unscoped.find_by(id: params[:last_id])
+    @payments = @group.payments.for_pagenate(payment)
+
     render json: @payments, status: :ok
   end
 
