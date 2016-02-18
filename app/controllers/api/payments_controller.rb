@@ -1,11 +1,17 @@
 class Api::PaymentsController < ApplicationController
   before_action :authenticate!
+  before_action :deny_first_and_last_params, only: %i(index)
   before_action :set_payment, only: %i(show update destroy)
   before_action :set_group, only: %i(index)
 
   def index
-    payment = Payment.unscoped.find_by(id: params[:last_id])
-    @payments = @group.payments.for_pagenate(payment)
+    payment = Payment.unscoped.find_by(id: params[:first_id] || params[:last_id])
+
+    if params[:first_id].present? && payment.present?
+      @payments = @group.payments.pagenate_prev(payment).reverse
+    else
+      @payments = @group.payments.pagenate_next(payment)
+    end
 
     render json: @payments, status: :ok
   end
@@ -90,6 +96,13 @@ class Api::PaymentsController < ApplicationController
   end
 
   private
+
+  def deny_first_and_last_params
+    if params[:first_id].present? && params[:last_id].present?
+      render json: {error: "first_idかlast_idはどちらか1つしか指定できません"}, status: :bad_request
+      return
+    end
+  end
 
   def set_payment
     @payment = Payment.find_by(id: params[:id])
