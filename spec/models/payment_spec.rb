@@ -186,4 +186,71 @@ RSpec.describe Payment do
       end
     end
   end
+
+  describe 'pagenation' do
+    let!(:user) { create(:user, id: 1) }
+    let!(:group) { create(:group, id: 1) }
+
+    before do
+      create(:group_user, user_id: user.id, group_id: group.id)
+    end
+
+    describe '#pagenate_next' do
+      context 'paymentを引数で指定していない場合' do
+        before do
+          30.times {|i| create(:payment, id: i + 1, group_id: group.id, paid_user_id: user.id)}
+        end
+
+        example '20件で区切られていること' do
+          expect(Payment.pagenate_next().count).to eq 20
+        end
+
+        example '最新のものを取得できていること' do
+          expect(Payment.pagenate_next().first.id).to eq 30
+        end
+      end
+
+      context 'paymentを引数で指定している場合' do
+        before do
+          create(:payment, id: 200, date: '2016-06-15', group_id: group.id, paid_user_id: user.id)
+          create(:payment, id: 100, date: '2015-06-15', group_id: group.id, paid_user_id: user.id)
+          create(:payment, id: 120, date: '2014-06-15', group_id: group.id, paid_user_id: user.id)
+          create(:payment, id: 110, date: '2014-06-15', group_id: group.id, paid_user_id: user.id)
+        end
+
+        let(:last_payment) { Payment.find(200) }
+
+        example '第一ソートDate, 第二ソートIdで並んでいること' do
+          expect(Payment.pagenate_next(last_payment).pluck(:id)).to eq [100, 120, 110]
+        end
+      end
+    end
+
+    describe '#pagenate_prev' do
+      describe 'num of list' do
+        before do
+          30.times {|i| create(:payment, id: i + 1, group_id: group.id, paid_user_id: user.id)}
+        end
+
+        example '20件で区切られていること' do
+          expect(Payment.pagenate_next().count).to eq 20
+        end
+      end
+
+      describe 'sort' do
+        before do
+          create(:payment, id: 200, date: '2016-06-15', group_id: group.id, paid_user_id: user.id)
+          create(:payment, id: 100, date: '2015-06-15', group_id: group.id, paid_user_id: user.id)
+          create(:payment, id: 120, date: '2014-06-15', group_id: group.id, paid_user_id: user.id)
+          create(:payment, id: 110, date: '2014-06-15', group_id: group.id, paid_user_id: user.id)
+        end
+
+        let(:first_payment) { Payment.find(110) }
+
+        example '第一ソートDate, 第二ソートIdで並んでいること' do
+          expect(Payment.pagenate_prev(first_payment).pluck(:id)).to eq [120, 100, 200]
+        end
+      end
+    end
+  end
 end
