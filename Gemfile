@@ -25,7 +25,11 @@ group :development do
   gem 'capistrano-rbenv'
   gem 'capistrano-bundler'
   gem 'capistrano-passenger'
+<<<<<<< 8be8435ef7c5ed5804df35ca19b60255c8b6b3fc
   gem "turnip"
+=======
+  gem 'bullet'
+>>>>>>> bulletの導入
 end
 
 group :test do
