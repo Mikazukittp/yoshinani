@@ -11,6 +11,7 @@ gem 'dotenv-rails'
 gem 'jbuilder', '~> 2.0'
 gem 'date_validator'
 gem 'thor'
+gem "squeel"
 gem 'sdoc', '~> 0.4.0',          group: :doc
 
 group :production do

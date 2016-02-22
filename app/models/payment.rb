@@ -14,6 +14,16 @@ class Payment < ActiveRecord::Base
   validates :group_id, presence: true
   validates :paid_user_id, presence: true, user_id: true, group_member: true
 
+  scope :pagenate_next, ->(payment = nil) {
+    where{ payment.present? ? ((date == payment.date) & (id < payment.id)) | (date < payment.date) : nil }
+    .order(date: :desc, id: :desc).limit(20)
+  }
+
+  scope :pagenate_prev, ->(payment) {
+    where{ ((date == payment.date) & (id > payment.id)) | (date > payment.date) }
+    .order(:date, :id).limit(20)
+  }
+
   def as_json(options={})
     super methods: [:paid_user, :participants]
   end
