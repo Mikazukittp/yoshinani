@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160223140825) do
+ActiveRecord::Schema.define(version: 20160225140825) do
 
   create_table "group_users", force: true do |t|
     t.integer  "group_id"
@@ -31,16 +31,22 @@ ActiveRecord::Schema.define(version: 20160223140825) do
     t.datetime "updated_at"
   end
 
-  create_table "oauths", force: true do |t|
-    t.integer  "user_id",    null: false
-    t.string   "name",       null: false
-    t.string   "auth_id",    null: false
+  create_table "oauth_registrations", force: true do |t|
+    t.integer  "user_id",        null: false
+    t.integer  "oauth_id",       null: false
+    t.string   "third_party_id", null: false
     t.date     "deleted_at"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  add_index "oauths", ["user_id"], name: "index_oauths_on_user_id", using: :btree
+  add_index "oauth_registrations", ["user_id"], name: "index_oauth_registrations_on_user_id", using: :btree
+
+  create_table "oauths", force: true do |t|
+    t.string   "name",       null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "participants", force: true do |t|
     t.integer  "payment_id"
