@@ -13,10 +13,17 @@ class User < ActiveRecord::Base
   has_many :to_pay_payments, class_name: 'Payment', through: :participants, source: :payment
 
   # validation
-  validates :account, presence: true, uniqueness: true, length: {maximum: 30}
-  validates :username, presence: true, length: {maximum: 30}
-  validates :email, presence: true, format: { with: VALID_EMAIL_REGEX, allow_blank: true }, uniqueness: true, length: {maximum: 256}
-  validates :password, presence: true
+  with_options unless: proc { [:oauth_registration].include?(validation_context) } do |user|
+    user.validates :account,  presence: true
+    user.validates :username, presence: true
+    user.validates :email,    presence: true, format: { with: VALID_EMAIL_REGEX, allow_blank: true }
+    user.validates :password, presence: true
+
+  end
+
+  validates :account,  uniqueness: true, length: {maximum: 30}
+  validates :username, length: {maximum: 30}
+  validates :email, uniqueness: true, length: {maximum: 256}
   validates :password, length: {minimum: 7, maximum: 20, allow_blank: true}, on: [:create, :reset_password]
   validates :role, numericality: { only_integer: true }
 
@@ -44,6 +51,8 @@ class User < ActiveRecord::Base
   # DB格納前のフック
   # saltと暗号化されたパスワードを生成
   def hash_password
+    return if self.password.nil?
+
     self.salt = User.new_salt
     self.password = User.crypt_password(self.password.strip, self.salt)
   end
@@ -78,5 +87,9 @@ class User < ActiveRecord::Base
     # s = rand.to_s.tr('+', '.')
     s = SecureRandom.base64(24)
     s[0, 32]
+  end
+
+  def oauth_registration?
+    oauth_registrations.present?
   end
 end
