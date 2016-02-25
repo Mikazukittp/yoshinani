@@ -18,7 +18,6 @@ class User < ActiveRecord::Base
     user.validates :username, presence: true
     user.validates :email,    presence: true, format: { with: VALID_EMAIL_REGEX, allow_blank: true }
     user.validates :password, presence: true
-
   end
 
   validates :account,  uniqueness: true, length: {maximum: 30}
