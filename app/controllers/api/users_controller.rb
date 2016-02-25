@@ -26,7 +26,15 @@ class Api::UsersController < ApplicationController
   end
 
   def update
-    if @user.update(user_params)
+    # OAuth登録直後のCSはpasswordがnilなのでupdateでハッシュ化する必要がある
+    if @user.oauth_registration_and_no_attribute?
+      @user.attributes = user_params
+      @user.hash_password
+    else
+      @user.attributes = user_params
+    end
+
+    if @user.save
       render json: @user, status: :ok
     else
       render json: {message: 'ユーザーの更新に失敗しました', errors: @user.errors.messages}, status: :internal_server_error

@@ -50,6 +50,7 @@ class User < ActiveRecord::Base
   # DB格納前のフック
   # saltと暗号化されたパスワードを生成
   def hash_password
+    # Oauth認証の場合はpasswordがnilでsaveされる
     return if self.password.nil?
 
     self.salt = User.new_salt
@@ -70,6 +71,10 @@ class User < ActiveRecord::Base
     groups.includes(:group_users).where(group_users: {status: 'inviting'}).as_json(user_id: self.id)
   end
 
+  def oauth_registration_and_no_attribute?
+    oauth_registrations.present? && account.nil?
+  end
+
   private
 
   def include_totals(group_id)
@@ -86,9 +91,5 @@ class User < ActiveRecord::Base
     # s = rand.to_s.tr('+', '.')
     s = SecureRandom.base64(24)
     s[0, 32]
-  end
-
-  def oauth_registration?
-    oauth_registrations.present?
   end
 end
