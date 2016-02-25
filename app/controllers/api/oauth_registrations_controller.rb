@@ -1,6 +1,6 @@
-class Api::OauthsController < ApplicationController
+class Api::OauthRegistrationsController < ApplicationController
   before_action :deny_unpermitted_third_party
-  before_action :validate_hash_token!
+  # before_action :validate_hash_token!
 
   def create
     if exist_auth_registration?
