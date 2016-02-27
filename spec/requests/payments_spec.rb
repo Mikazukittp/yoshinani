@@ -242,6 +242,7 @@ RSpec.describe 'Users', type: :request do
       create(:group_user, user_id: sign_in_user.id, group_id: group.id)
       create(:group_user, user_id: user_1.id, group_id: group.id)
       create(:group_user, user_id: user_2.id, group_id: group.id)
+      create(:total, user_id: sign_in_user.id, group_id: group.id)
     end
 
     context '正しいパラメータを送った場合' do
@@ -259,6 +260,10 @@ RSpec.describe 'Users', type: :request do
 
       example '期待したデータが取得されていること' do
         expect(@json['deleted_at']).not_to be_nil
+      end
+
+      example '期待したデータが取得されていること' do
+        expect(Total.find_by(user_id: sign_in_user.id).paid).to eq 190000
       end
     end
 
