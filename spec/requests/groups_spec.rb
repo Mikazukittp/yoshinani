@@ -134,7 +134,7 @@ RSpec.describe 'Groups', type: :request do
       end
 
       example '適切なエラーメッセージが返されること' do
-        expect(@json['error']).to eq '指定されたIDのグループが見つかりません'
+        expect(@json['message']).to eq '指定されたIDのグループが見つかりません'
       end
     end
   end
