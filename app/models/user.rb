@@ -14,9 +14,9 @@ class User < ActiveRecord::Base
   # validation
   validates :account, presence: true, uniqueness: true, length: {maximum: 30}
   validates :username, presence: true, length: {maximum: 30}
-  validates :email, presence: true, format: { with: VALID_EMAIL_REGEX }, uniqueness: true, length: {maximum: 256}
+  validates :email, presence: true, format: { with: VALID_EMAIL_REGEX, allow_blank: true }, uniqueness: true, length: {maximum: 256}
   validates :password, presence: true
-  validates :password, length: {minimum: 7, maximum: 20}, on: :create
+  validates :password, length: {minimum: 7, maximum: 20, allow_blank: true}, on: :create
   validates :role, numericality: { only_integer: true }
 
   before_create :hash_password
