@@ -52,7 +52,7 @@ RSpec.describe User do
       context '空の場合' do
         let(:username) { nil }
 
-        it { expect(user.errors_on(:username)).to include('ユーザー名を入力してください') }
+        it { expect(user.errors_on(:username)).to be_empty }
       end
 
       context '30文字の場合' do
@@ -80,7 +80,7 @@ RSpec.describe User do
       context '空の場合' do
         let(:email) { nil }
 
-        it { expect(user.errors_on(:email)).to include('メールアドレスを入力してください') }
+        it { expect(user.errors_on(:email)).to be_empty }
       end
 
       context '重複する値の場合' do
