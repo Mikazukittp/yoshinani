@@ -88,11 +88,18 @@ class Api::PaymentsController < ApplicationController
       return
     end
 
-    if @payment.update(deleted_at: Time.now)
-      render json: @payment, status: :ok
-    else
-      render json: {message: "支払いの削除に失敗しました", errors: @payment.errors.messages}, status: :internal_server_error
+    begin
+      ActiveRecord::Base.transaction do
+        @payment.update(deleted_at: Time.now)
+        set_total(-@payment.amount, @payment.paid_user_id, @payment.participants.pluck(:id), @payment.group_id)
+      end
+
+    rescue ActiveRecord::RecordInvalid => invalid
+      render json: {message: "支払いの削除に失敗しました", errors: invalid.record.errors.messages}, status: :internal_server_error
+      return
     end
+
+    render json: @payment, status: :ok
   end
 
   private
