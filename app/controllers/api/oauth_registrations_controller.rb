@@ -10,7 +10,7 @@ class Api::OauthRegistrationsController < ApplicationController
       if user.save(context: :oauth_registration)
         status = :ok
       else
-        render json: {error: "ログインに失敗しました"}, status: :internal_server_error and return
+        render json: {message: "ログインに失敗しました", errors: user.errors.messages}, status: :internal_server_error and return
       end
     else
       # 新規作成
@@ -23,7 +23,7 @@ class Api::OauthRegistrationsController < ApplicationController
         status = :created
 
       rescue ActiveRecord::RecordInvalid => invalid
-        render json: invalid.record.errors.full_messages, status: :internal_server_error
+        render json: {message: "会員登録に失敗しました", errors: invalid.record.errors.messages}, status: :internal_server_error
       end
     end
 
@@ -42,7 +42,7 @@ class Api::OauthRegistrationsController < ApplicationController
 
   def deny_unpermitted_third_party
     unless Oauth.exists?(id: params[:oauth_registration][:oauth_id])
-      render json: {error: "許可されていないSNSです"}, status: :bad_request
+      render json: {message: "許可されていないSNSです"}, status: :bad_request
       return
     end
   end
@@ -52,7 +52,7 @@ class Api::OauthRegistrationsController < ApplicationController
     salt = ENV["YOSHINANI_SALT"]
 
     unless Digest::MD5.hexdigest(target_id + salt) == params[:oauth_registration][:sns_hash_id]
-      render json: {error: "不正な操作です"}, status: :bad_request
+      render json: {message: "不正な操作です"}, status: :bad_request
       return
     end
   end

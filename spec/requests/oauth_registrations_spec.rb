@@ -56,7 +56,7 @@ RSpec.describe 'OauthRegistration', type: :request do
         end
 
         example '適切なエラーメッセージが返ってくること' do
-          expect(@json['error']).to eq '許可されていないSNSです'
+          expect(@json['message']).to eq '許可されていないSNSです'
         end
       end
 
@@ -80,7 +80,7 @@ RSpec.describe 'OauthRegistration', type: :request do
         end
 
         example '適切なエラーメッセージが返ってくること' do
-          expect(@json['error']).to eq '不正な操作です'
+          expect(@json['message']).to eq '不正な操作です'
         end
       end
     end
@@ -131,7 +131,7 @@ RSpec.describe 'OauthRegistration', type: :request do
         end
 
         example '適切なエラーメッセージが返ってくること' do
-          expect(@json['error']).to eq '許可されていないSNSです'
+          expect(@json['message']).to eq '許可されていないSNSです'
         end
       end
 
@@ -155,7 +155,7 @@ RSpec.describe 'OauthRegistration', type: :request do
         end
 
         example '適切なエラーメッセージが返ってくること' do
-          expect(@json['error']).to eq '不正な操作です'
+          expect(@json['message']).to eq '不正な操作です'
         end
       end
     end
