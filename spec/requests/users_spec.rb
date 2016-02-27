@@ -62,7 +62,7 @@ RSpec.describe 'Users', type: :request do
       end
 
       example '適切なエラーメッセージが返されること' do
-        expect(@json['error']).to eq 'グループidが入力されていません'
+        expect(@json['message']).to eq 'グループidが入力されていません'
       end
     end
   end
@@ -128,7 +128,7 @@ RSpec.describe 'Users', type: :request do
       end
 
       example '期待したデータが取得されていること' do
-        expect(@json['error']).to eq 'ユーザの作成に失敗しました'
+        expect(@json['message']).to eq 'ユーザーの作成に失敗しました'
       end
     end
   end
@@ -164,7 +164,7 @@ RSpec.describe 'Users', type: :request do
       end
 
       example '適切なエラーメッセージが返されること' do
-        expect(@json['error']).to eq '指定されたIDのユーザが見つかりません'
+        expect(@json['message']).to eq '指定されたIDのユーザーが見つかりません'
       end
     end
   end
@@ -239,7 +239,7 @@ RSpec.describe 'Users', type: :request do
       end
 
       example '適切なエラーメッセージが返されること' do
-        expect(@json['error']).to eq 'アカウント名かパスワードが正しくありません'
+        expect(@json['message']).to eq 'アカウント名かパスワードが正しくありません'
       end
     end
 
@@ -255,7 +255,7 @@ RSpec.describe 'Users', type: :request do
       end
 
       example '適切なエラーメッセージが返されること' do
-        expect(@json['error']).to eq 'アカウント名かパスワードが正しくありません'
+        expect(@json['message']).to eq 'アカウント名かパスワードが正しくありません'
       end
     end
   end

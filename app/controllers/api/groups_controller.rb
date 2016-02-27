@@ -22,7 +22,7 @@ class Api::GroupsController < ApplicationController
       render json: @group, status: :ok
 
     rescue ActiveRecord::RecordInvalid => invalid
-      render json: invalid.record.errors.full_messages, status: :internal_server_error
+      render json: {message: "グループの作成に成功しました" ,errors: invalid.record.errors.messages}, status: :internal_server_error
     end
   end
 
@@ -30,7 +30,7 @@ class Api::GroupsController < ApplicationController
     if @group.update(group_params)
       render json: @group, status: :ok
     else
-      render json: {error: "グループの更新に失敗しました"}, status: :internal_server_error
+      render json: {message: "グループの更新に失敗しました", errors: @group.errors.messages}, status: :internal_server_error
     end
   end
 
@@ -38,7 +38,7 @@ class Api::GroupsController < ApplicationController
     if @group.destroy
       render json: @group, status: :ok
     else
-      render json: {error: "グループの削除に失敗しました"}, status: :internal_server_error
+      render json: {message: "グループの削除に失敗しました", errors: @group.errors.messages}, status: :internal_server_error
     end
   end
 
@@ -47,7 +47,7 @@ class Api::GroupsController < ApplicationController
   def set_group
     @group = @user.groups.find_by(id: params[:id])
     unless @group.present?
-      render json: {error: "指定されたIDのグループが見つかりません"}, status: :not_found
+      render json: {message: "指定されたIDのグループが見つかりません"}, status: :not_found
       return
     end
   end

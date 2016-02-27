@@ -60,7 +60,7 @@ RSpec.describe 'Groups', type: :request do
         end
 
         example '適切なエラーメッセージが返されること' do
-          expect(@json['error']).to eq 'パスワードが正しくありません'
+          expect(@json['message']).to eq 'パスワードが正しくありません'
         end
       end
 
@@ -82,7 +82,29 @@ RSpec.describe 'Groups', type: :request do
         end
 
         example '適切なエラーメッセージが返されること' do
-          expect(@json['error']).to eq '新しいパスワードと確認用パスワードが一致していません'
+          expect(@json['message']).to eq '新しいパスワードと確認用パスワードが一致していません'
+        end
+      end
+
+      context 'パスワードが不正な値の場合' do
+        let(:params) {{
+          password: 'password1!',
+          new_password: 'pass',
+          new_password_confirmation: 'pass'
+        }}
+
+        before do
+          patch api_passwords_path, params, env
+          @json = JSON.parse(response.body)
+        end
+
+        example '500が返ってくること' do
+          expect(response).not_to be_success
+          expect(response.status).to eq 400
+        end
+
+        example '適切なエラーメッセージが返されること' do
+          expect(@json['message']).to eq 'パスワードの更新に失敗しました'
         end
       end
     end

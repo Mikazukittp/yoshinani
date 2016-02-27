@@ -21,14 +21,14 @@ class Api::GroupUsersController < ApplicationController
     render json: @group, status: :ok
 
     rescue ActiveRecord::RecordInvalid => invalid
-      render json: {message: "メンバーの追加に失敗しました", errors: @group_user.errors.full_messages}, status: :internal_server_error
+      render json: {message: "メンバーの追加に失敗しました", errors: @group_user.errors.messages}, status: :internal_server_error
   end
 
   def destroy
     if @group_user.destroy
       render json: @group_user, status: :no_content
     else
-      render json: {error: "グループの退会に失敗しました"}, status: :internal_server_error
+      render json: {message: "グループの退会に失敗しました", errors: @group_user.errors.messages}, status: :internal_server_error
     end
   end
 
@@ -36,7 +36,7 @@ class Api::GroupUsersController < ApplicationController
     if @group_user.update(status: 'active')
       render json: @group_user, status: :ok
     else
-      render json: {error: "グループの参加に失敗しました"}, status: :internal_server_error
+      render json: {message: "グループの参加に失敗しました", errors: @group_user.errors.messages}, status: :internal_server_error
     end
   end
 
@@ -45,7 +45,7 @@ class Api::GroupUsersController < ApplicationController
   def set_group
     @group = @user.groups.find_by(id: params[:group_id])
     unless @group.present?
-      render json: {error: "指定されたIDのグループが見つかりません"}, status: :bad_request
+      render json: {message: "指定されたIDのグループが見つかりません"}, status: :bad_request
       return
     end
   end
@@ -55,7 +55,7 @@ class Api::GroupUsersController < ApplicationController
 
     @group_user = @group.group_users.find_by(user_id: user_id)
     unless @group_user.present?
-      render json: {error: "グループユーザが見つかりません"}, status: :bad_request
+      render json: {message: "グループユーザが見つかりません"}, status: :bad_request
       return
     end
   end

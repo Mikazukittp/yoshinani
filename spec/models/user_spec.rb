@@ -14,7 +14,7 @@ RSpec.describe User do
       context '空の場合' do
         let(:account) { nil }
 
-        it { expect(user.errors_on(:account)).to include('can\'t be blank') }
+        it { expect(user.errors_on(:account)).to include('アカウント名を入力してください') }
       end
 
       context '重複する値の場合' do
@@ -24,7 +24,7 @@ RSpec.describe User do
           create(:user, account: 'amuro_rei')
         end
 
-        it { expect(user.errors_on(:account)).to include('has already been taken') }
+        it { expect(user.errors_on(:account)).to include('アカウント名はすでに存在します') }
       end
 
       context '30文字の場合' do
@@ -36,7 +36,7 @@ RSpec.describe User do
       context '31文字の場合' do
         let(:account) { 'hogehogehogehogehogehogehogehog' }
 
-        it { expect(user.errors_on(:account)).to include('is too long (maximum is 30 characters)') }
+        it { expect(user.errors_on(:account)).to include('アカウント名は30文字以内で入力してください') }
       end
     end
 
@@ -52,7 +52,7 @@ RSpec.describe User do
       context '空の場合' do
         let(:username) { nil }
 
-        it { expect(user.errors_on(:username)).to include('can\'t be blank') }
+        it { expect(user.errors_on(:username)).to include('ユーザー名を入力してください') }
       end
 
       context '30文字の場合' do
@@ -64,7 +64,7 @@ RSpec.describe User do
       context '31文字の場合' do
         let(:username) { 'hogehogehogehogehogehogehogehog' }
 
-        it { expect(user.errors_on(:username)).to include('is too long (maximum is 30 characters)') }
+        it { expect(user.errors_on(:username)).to include('ユーザー名は30文字以内で入力してください') }
       end
     end
 
@@ -80,7 +80,7 @@ RSpec.describe User do
       context '空の場合' do
         let(:email) { nil }
 
-        it { expect(user.errors_on(:email)).to include('can\'t be blank') }
+        it { expect(user.errors_on(:email)).to include('メールアドレスを入力してください') }
       end
 
       context '重複する値の場合' do
@@ -90,19 +90,19 @@ RSpec.describe User do
           create(:user, email: 'gandum-rx78-2@example.com')
         end
 
-        it { expect(user.errors_on(:email)).to include('has already been taken') }
+        it { expect(user.errors_on(:email)).to include('メールアドレスはすでに存在します') }
       end
 
       context '不正な値の場合' do
         let(:email) { 'gandum-rx78-2@zakuzaku' }
 
-        it { expect(user.errors_on(:email)).to include('is invalid') }
+        it { expect(user.errors_on(:email)).to include('メールアドレスは不正な値です') }
       end
 
       context '256文字以上の場合' do
         let(:email) { 'x' * 256 + '@example.com' }
 
-        it { expect(user.errors_on(:email)).to include('is too long (maximum is 256 characters)') }
+        it { expect(user.errors_on(:email)).to include('メールアドレスは256文字以内で入力してください') }
       end
     end
 
@@ -118,13 +118,13 @@ RSpec.describe User do
       context '空の場合' do
         let(:password) { nil }
 
-        it { expect(user.errors_on(:password)).to include('can\'t be blank') }
+        it { expect(user.errors_on(:password)).to include('パスワードを入力してください') }
       end
 
       context '6文字の場合' do
         let(:password) { 'p' * 6 }
 
-        it { expect(user.errors_on(:password)).to include('is too short (minimum is 7 characters)') }
+        it { expect(user.errors_on(:password)).to include('パスワードは7文字以上で入力してください') }
       end
 
       context '7文字の場合' do
@@ -142,7 +142,7 @@ RSpec.describe User do
       context '21文字の場合' do
         let(:password) { 'p' * 21 }
 
-        it { expect(user.errors_on(:password)).to include('is too long (maximum is 20 characters)') }
+        it { expect(user.errors_on(:password)).to include('パスワードは20文字以内で入力してください') }
       end
     end
 
@@ -158,7 +158,7 @@ RSpec.describe User do
       context 'integer以外の値の場合' do
         let(:role) { '大佐' }
 
-        it { expect(user.errors_on(:role)).to include('is not a number') }
+        it { expect(user.errors_on(:role)).to include('ロールは数値で入力してください') }
       end
     end
   end

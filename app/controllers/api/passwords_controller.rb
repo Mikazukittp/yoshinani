@@ -5,12 +5,17 @@ class Api::PasswordsController < ApplicationController
 
   def update
     @user.password = params[:new_password]
+    unless @user.valid?(:reset_password)
+      render json: {message: "パスワードの更新に失敗しました", errors: @user.errors.messages}, status: :bad_request
+      return
+    end
+
     @user.hash_password
 
     if @user.save
       render json: @user, status: :ok
     else
-      render json: {error: "パスワードの更新に失敗しました"}, status: :internal_server_error
+      render json: {message: "パスワードの更新に失敗しました", errors: @user.errors.messages}, status: :internal_server_error
     end
   end
 
@@ -18,13 +23,13 @@ class Api::PasswordsController < ApplicationController
 
   def verify_old_password
     unless @user.authoricate(params[:password].strip)
-      render json: {error: "パスワードが正しくありません"}, status: :bad_request
+      render json: {message: "パスワードが正しくありません"}, status: :bad_request
     end
   end
 
   def verify_password_confirmation
     unless params[:new_password] == params[:new_password_confirmation]
-      render json: {error: "新しいパスワードと確認用パスワードが一致していません"}, status: :bad_request
+      render json: {message: "新しいパスワードと確認用パスワードが一致していません"}, status: :bad_request
     end
   end
 end

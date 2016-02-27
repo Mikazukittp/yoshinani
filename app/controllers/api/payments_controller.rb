@@ -38,13 +38,13 @@ class Api::PaymentsController < ApplicationController
     end
 
   rescue ActiveRecord::RecordInvalid => invalid
-    render json: invalid.record.errors.full_messages, status: :internal_server_error
+    render json: {message: "支払いの作成に失敗しました", errors: invalid.record.errors.messages}, status: :internal_server_error
   end
 
 
   def update
     unless @payment.paid_user.id == @user.id
-      render json: {errors: "権限のない操作です"}, status: :forbidden
+      render json: {message: "権限のない操作です"}, status: :forbidden
       return
     end
 
@@ -79,19 +79,19 @@ class Api::PaymentsController < ApplicationController
     end
 
   rescue ActiveRecord::RecordInvalid => invalid
-    render json: invalid.record.errors.full_messages, status: :internal_server_error
+    render json: {message: "支払いの作成に失敗しました", errors: invalid.record.errors.messages}, status: :internal_server_error
   end
 
   def destroy
     unless @payment.paid_user.id == @user.id
-      render json: {errors: "権限のない操作です"}, status: :forbidden
+      render json: {message: "権限のない操作です"}, status: :forbidden
       return
     end
 
     if @payment.update(deleted_at: Time.now)
       render json: @payment, status: :ok
     else
-      render json: {errors: "精算の削除に失敗しました"}, status: :internal_server_error
+      render json: {message: "支払いの削除に失敗しました", errors: @payment.errors.messages}, status: :internal_server_error
     end
   end
 
@@ -99,7 +99,7 @@ class Api::PaymentsController < ApplicationController
 
   def deny_first_and_last_params
     if params[:first_id].present? && params[:last_id].present?
-      render json: {error: "first_idかlast_idはどちらか1つしか指定できません"}, status: :bad_request
+      render json: {message: "first_idかlast_idはどちらか1つしか指定できません"}, status: :bad_request
       return
     end
   end
@@ -107,21 +107,21 @@ class Api::PaymentsController < ApplicationController
   def set_payment
     @payment = Payment.find_by(id: params[:id])
     unless @payment.present? && @user.groups.exists?(id: @payment.group_id)
-      render json: {error: "指定されたIDの精算が見つかりません"}, status: :not_found
+      render json: {message: "指定されたIDの精算が見つかりません"}, status: :not_found
       return
     end
   end
 
   def set_group
     if params['group_id'].blank?
-      render json: {errors: "グループidが入力されていません"}, status: :bad_request
+      render json: {message: "グループidが入力されていません"}, status: :bad_request
       return
     end
 
     @group = @user.groups.find_by(id: params['group_id'])
 
     unless @group.present?
-      render json: {error: "指定されたIDのグループが見つかりません"}, status: :bad_request
+      render json: {message: "指定されたIDのグループが見つかりません"}, status: :bad_request
       return
     end
   end

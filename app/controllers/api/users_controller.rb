@@ -5,7 +5,7 @@ class Api::UsersController < ApplicationController
   def index
     # バリデーション
     if params['group_id'].blank?
-      render json: {error: "グループidが入力されていません"}, status: :internal_server_error
+      render json: {message: "グループidが入力されていません"}, status: :internal_server_error
       return
     end
     render json: Group.find(params['group_id']).users, status: :ok
@@ -21,7 +21,7 @@ class Api::UsersController < ApplicationController
     if @user.save
       render json: @user, status: :ok
     else
-      render json: {error: "ユーザの作成に失敗しました"}, status: :internal_server_error
+      render json: {message: 'ユーザーの作成に失敗しました', errors: @user.errors.messages }, status: :internal_server_error
     end
   end
 
@@ -29,7 +29,7 @@ class Api::UsersController < ApplicationController
     if @user.update(user_params)
       render json: @user, status: :ok
     else
-      render json: {error: "ユーザの更新に失敗しました"}, status: :internal_server_error
+      render json: {message: 'ユーザーの更新に失敗しました', errors: @user.errors.messages}, status: :internal_server_error
     end
   end
 
@@ -41,7 +41,7 @@ class Api::UsersController < ApplicationController
     #usernameとpasswordを受け取って、正しければ、tokenを再生成して、DBに上書く&返す
     @user = User.find_by(account: params[:account].strip)
     if @user.blank?
-      render json: {error: "アカウント名かパスワードが正しくありません"}, status: :unauthorized
+      render json: {message: "アカウント名かパスワードが正しくありません"}, status: :unauthorized
       return
     end
 
@@ -50,7 +50,7 @@ class Api::UsersController < ApplicationController
       @user.save!
       render json: @user, status: :ok
     else
-      render json: {error: "アカウント名かパスワードが正しくありません"}, status: :unauthorized
+      render json: {message: "アカウント名かパスワードが正しくありません"}, status: :unauthorized
     end
   end
 
@@ -58,7 +58,7 @@ class Api::UsersController < ApplicationController
     if @user.update(token: nil)
       render json: @user, status: :ok
     else
-      render json: {error: "サインアウトに失敗しました"}, status: :internal_server_error
+      render json: {message: "サインアウトに失敗しました", errors: @user.errors.messages}, status: :internal_server_error
     end
   end
 
@@ -78,7 +78,7 @@ class Api::UsersController < ApplicationController
   def set_user
     @user = User.find_by(id: params[:id])
     unless @user.present?
-      render json: {error: "指定されたIDのユーザが見つかりません"}, status: :not_found
+      render json: {message: "指定されたIDのユーザーが見つかりません"}, status: :not_found
       return
     end
   end
