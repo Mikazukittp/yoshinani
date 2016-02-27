@@ -14,19 +14,19 @@ RSpec.describe Payment do
       context '空の場合' do
         let(:amount) { nil }
 
-        it { expect(payment.errors_on(:amount)).to include('can\'t be blank') }
+        it { expect(payment.errors_on(:amount)).to include('金額を入力してください') }
       end
 
       context '負の値の場合' do
         let(:amount) { -10000 }
 
-        it { expect(payment.errors_on(:amount)).to include('must be greater than or equal to 0') }
+        it { expect(payment.errors_on(:amount)).to include('金額は0以上の値にしてください') }
       end
 
       context 'integer以外の値の場合' do
         let(:amount) { 'たくさん' }
 
-        it { expect(payment.errors_on(:amount)).to include('is not a number') }
+        it { expect(payment.errors_on(:amount)).to include('金額は数値で入力してください') }
       end
     end
 
@@ -42,7 +42,7 @@ RSpec.describe Payment do
       context '空の場合' do
         let(:event) { nil }
 
-        it { expect(payment.errors_on(:event)).to include('can\'t be blank') }
+        it { expect(payment.errors_on(:event)).to include('イベントを入力してください') }
       end
 
       context '30文字の場合' do
@@ -54,7 +54,7 @@ RSpec.describe Payment do
       context '31文字の場合' do
         let(:event) { 'あ' * 31 }
 
-        it { expect(payment.errors_on(:event)).to include('is too long (maximum is 30 characters)')}
+        it { expect(payment.errors_on(:event)).to include('イベントは30文字以内で入力してください')}
       end
 
       context '精算の場合' do
@@ -78,7 +78,7 @@ RSpec.describe Payment do
       context '空の場合' do
         let(:description) { nil }
 
-        it { expect(payment.errors_on(:description)).to include('can\'t be blank') }
+        it { expect(payment.errors_on(:description)).to include('説明を入力してください') }
       end
 
       context '100文字の場合' do
@@ -90,7 +90,7 @@ RSpec.describe Payment do
       context '101文字の場合' do
         let(:description) { 'あ' * 101 }
 
-        it { expect(payment.errors_on(:description)).to include('is too long (maximum is 100 characters)')}
+        it { expect(payment.errors_on(:description)).to include('説明は100文字以内で入力してください')}
       end
 
       context '精算の場合' do
@@ -114,13 +114,13 @@ RSpec.describe Payment do
       context '空の場合' do
         let(:date) { nil }
 
-        it { expect(payment.errors_on(:date)).to include('can\'t be blank') }
+        it { expect(payment.errors_on(:date)).to include('日付を入力してください') }
       end
 
       context 'date以外の値の場合' do
         let(:date) { 'ふがふが' }
 
-        it { expect(payment.errors_on(:date)).to include('is not a date') }
+        it { expect(payment.errors_on(:date)).to include('は日付ではありません') }
       end
     end
 
@@ -136,7 +136,7 @@ RSpec.describe Payment do
       context '空の場合' do
         let(:group_id) { nil }
 
-        it { expect(payment.errors_on(:group_id)).to include('can\'t be blank') }
+        it { expect(payment.errors_on(:group_id)).to include('Groupを入力してください') }
       end
     end
 
@@ -159,7 +159,7 @@ RSpec.describe Payment do
       context '空の場合' do
         let(:paid_user_id) { nil }
 
-        it { expect(payment.errors_on(:paid_user_id)).to include('can\'t be blank') }
+        it { expect(payment.errors_on(:paid_user_id)).to include('立替者の会員番号を入力してください') }
       end
 
       context 'paid_user_idに紐づくuserが存在しない場合' do

@@ -7,10 +7,10 @@ class Payment < ActiveRecord::Base
   has_many :participant_reference, class_name: 'Participant'
   has_many :participants, class_name: 'User', through: :participant_reference, source: :user
 
-  validates :amount, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
+  validates :amount, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0, allow_blank: true }
   validates :event, presence: true, length: {maximum: 30}, unless: :is_repayment
   validates :description, presence: true, length: {maximum: 100}, unless: :is_repayment
-  validates :date, presence: true, date: true
+  validates :date, presence: true, date: { allow_blank: true }
   validates :group_id, presence: true
   validates :paid_user_id, presence: true, user_id: true, group_member: true
 
