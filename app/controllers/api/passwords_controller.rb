@@ -1,7 +1,20 @@
 class Api::PasswordsController < ApplicationController
-  before_action :authenticate!
-  before_action :verify_old_password
-  before_action :verify_password_confirmation
+  before_action :authenticate!, only: %i(update)
+  before_action :verify_old_password, only: %i(update)
+  before_action :verify_password_confirmation, only: %i(update)
+
+  def reset
+    @user = User.find_by(account: params[:user][:account], email: params[:user][:email])
+
+    if @user.nil?
+      render json: {message: "一致する情報はみつかりませんでした。"}, status: :bad_request
+      return
+    end
+
+    PasswordMailer.send_rest_password(@user)
+
+    render json: {message: "パスワード再設定用のメールを送信いたしました"}, status: :ok
+  end
 
   def update
     @user.password = params[:new_password]

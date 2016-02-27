@@ -19,7 +19,11 @@ Rails.application.routes.draw do
         end
       end
       resources :payments
-      resource :passwords, only: %i(update)
+      resource :passwords, only: %i(update) do
+        collection do
+          post :reset
+        end
+      end
       resources :oauth_registrations, only: %i(create)
     end
   end
