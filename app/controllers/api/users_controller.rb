@@ -29,7 +29,7 @@ class Api::UsersController < ApplicationController
     if @user.update(user_params)
       render json: @user, status: :ok
     else
-      render json: {message: 'ユーザーの更新に失敗しました', errors: @user.errors.full_messages}, status: :internal_server_error
+      render json: {message: 'ユーザーの更新に失敗しました', errors: @user.errors.messages}, status: :internal_server_error
     end
   end
 
@@ -58,7 +58,7 @@ class Api::UsersController < ApplicationController
     if @user.update(token: nil)
       render json: @user, status: :ok
     else
-      render json: {message: "サインアウトに失敗しました", errors: @user.errors.full_messages}, status: :internal_server_error
+      render json: {message: "サインアウトに失敗しました", errors: @user.errors.messages}, status: :internal_server_error
     end
   end
 

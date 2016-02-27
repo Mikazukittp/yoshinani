@@ -20,28 +20,28 @@ ja:
         id: グループユーザーID
         role: ロール
         status: ステータス
-        group_id: activerecord.models.group.id
-        user_id: activerecord.models.user.id
+        group_id: :activerecord.models.group.id
+        user_id: :activerecord.models.user.id
         <<: *timestamps
       participant:
-        payment_id: activerecord.models.payment.id
-        user_id: activerecord.models.user.id
+        payment_id: :activerecord.models.payment.id
+        user_id: :activerecord.models.user.id
       payment:
         id: 支払いID
         amount: 金額
         event: イベント
-        desctription: 説明
+        description: 説明
         date: 日付
         paid_user_id: 立替者の会員番号
         is_repayment: 精算フラグ
         deleted_at: 削除日時
-        group_id: activerecord.models.group.id
+        group_id: :グループID
         <<: *timestamps
       total:
         paid: 立替金額
         to_pay: 立替てもらった金額
-        group_id: activerecord.models.group.id
-        user_id: activerecord.models.user.id
+        group_id: :activerecord.models.group.id
+        user_id: :activerecord.models.user.id
         <<: *timestamps
       user:
         id: 会員番号
