@@ -66,11 +66,24 @@ class User < ActiveRecord::Base
   end
 
   def active_groups()
-    groups.where(group_users: {status: 'active'}).as_json(user_id: self.id)
+    groups.select{|group| exist_group_user_with_status(group, 'active') }.as_json(user_id: self.id)
   end
 
   def invited_groups()
-    groups.where(group_users: {status: 'inviting'}).as_json(user_id: self.id)
+    groups.select{|group| exist_group_user_with_status(group, 'inviting') }.as_json(user_id: self.id)
+  end
+
+  def exist_group_user_with_status(group, status)
+    result = false
+
+    group.group_users.each do |gu|
+      if gu.user_id == self.id && gu.status == status
+        result = true
+        return
+      end
+    end
+
+    return result
   end
 
   def oauth_registration_and_no_attribute?
@@ -80,7 +93,7 @@ class User < ActiveRecord::Base
   private
 
   def include_totals(group_id)
-    group_id.present? ? totals.where(group_id: group_id) : totals
+    group_id.present? ? totals.select{|t| t.group_id == group_id} : totals
   end
 
   # パスワードを暗号化する

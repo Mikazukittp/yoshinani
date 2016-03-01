@@ -5,7 +5,8 @@ class Api::PaymentsController < ApplicationController
   before_action :set_group, only: %i(index)
 
   def index
-    payments = @group.payments.includes(paid_user: :totals, participants: :totals)
+    payments = @group.payments.includes(paid_user: [:totals, groups: :group_users],
+      participants:  [:totals, groups: :group_users])
 
     if last_payment = Payment.unscoped.find_by(id: params[:last_id]).presence
       payments = payments.pagenate_next(last_payment)
