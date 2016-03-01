@@ -79,7 +79,6 @@ class User < ActiveRecord::Base
     group.group_users.each do |gu|
       if gu.user_id == self.id && gu.status == status
         result = true
-        return
       end
     end
 
