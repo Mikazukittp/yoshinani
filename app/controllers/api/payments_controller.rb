@@ -5,12 +5,14 @@ class Api::PaymentsController < ApplicationController
   before_action :set_group, only: %i(index)
 
   def index
+    payments = @group.payments.includes(paid_user: :totals, participants: :totals)
+
     if last_payment = Payment.unscoped.find_by(id: params[:last_id]).presence
-      payments = @group.payments.pagenate_next(last_payment)
+      payments = payments.pagenate_next(last_payment)
     elsif first_payment = Payment.unscoped.find_by(id: params[:first_id]).presence
-      payments = @group.payments.pagenate_prev(first_payment).reverse
+      payments = payments.pagenate_prev(first_payment).reverse
     else
-      payments = @group.payments.pagenate_next()
+      payments = payments.pagenate_next()
     end
 
     render json: payments, status: :ok
