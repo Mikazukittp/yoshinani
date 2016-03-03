@@ -20,7 +20,7 @@ class User < ActiveRecord::Base
 
   validates :account,  uniqueness: true, length: {maximum: 30}
   validates :username, length: {maximum: 30}
-  validates :email, uniqueness: true, length: {maximum: 256}, format: { with: VALID_EMAIL_REGEX, allow_blank: true }
+  validates :email, uniqueness: true, allow_nil: true, length: {maximum: 256}, format: { with: VALID_EMAIL_REGEX, allow_blank: true }
   validates :password, length: {minimum: 7, maximum: 20, allow_blank: true}, on: [:create, :reset_password]
   validates :role, numericality: { only_integer: true }
 
