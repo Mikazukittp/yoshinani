@@ -1,6 +1,9 @@
 require 'factory_girl_rails'
+require 'turnip'
+require 'turnip/rspec'
 
 RSpec.configure do |config|
+  Turnip.type = :request
   # rspec-expectations config goes here. You can use an alternate
   # assertion/expectation library such as wrong or the stdlib/minitest
   # assertions if you prefer.
@@ -23,6 +26,8 @@ RSpec.configure do |config|
     # `true` in RSpec 4.
     mocks.verify_partial_doubles = true
   end
+
+  Dir.glob("spec/**/*steps.rb") { |f| load f, true }
 
   # いちいちFactoryGirlを呼び出すのがめんどくさいのでここでincludeする
   config.include FactoryGirl::Syntax::Methods
