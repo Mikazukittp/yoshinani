@@ -26,6 +26,7 @@ group :development do
   gem 'capistrano-bundler'
   gem 'capistrano-passenger'
   gem "turnip"
+  gem 'bullet'
 end
 
 group :test do
