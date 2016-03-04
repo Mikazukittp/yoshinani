@@ -29,5 +29,7 @@ module Yoshinani
 
     # add custom validators path
     config.autoload_paths += Dir["#{config.root}/app/validators"]
+
+    config.generators.fixture_replacement :factory_girl, dir: 'spec/factories'
   end
 end

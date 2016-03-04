@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 RSpec.describe User do
   describe 'validation' do
     describe '#account' do

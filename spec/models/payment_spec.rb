@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 RSpec.describe Payment do
   describe 'validation' do
     describe '#amount' do
@@ -166,12 +164,10 @@ RSpec.describe Payment do
         let(:paid_user_id) { 1 }
 
         before do
-          create(:user, id: paid_user_id)
           create(:group, id: group_id)
-          create(:group_user, user_id: paid_user_id, group_id: group_id)
         end
 
-        xit { expect(payment.errors_on(:paid_user_id)).to include('指定されたuserは存在しません') }
+        it { expect(payment.errors_on(:paid_user_id)).to include('指定されたuserは存在しません') }
       end
 
       context 'paid_user_idがgroup_idのグループに所属していない場合' do

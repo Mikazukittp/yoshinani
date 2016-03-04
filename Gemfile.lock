@@ -70,6 +70,8 @@ GEM
     fuubar (2.0.0)
       rspec (~> 3.0)
       ruby-progressbar (~> 1.4)
+    gherkin (2.12.2)
+      multi_json (~> 1.3)
     hike (1.2.3)
     i18n (0.7.0)
     jbuilder (2.3.1)
@@ -170,6 +172,9 @@ GEM
     tilt (1.4.1)
     turbolinks (2.5.3)
       coffee-rails
+    turnip (2.1.0)
+      gherkin (~> 2.5)
+      rspec (>= 3.0, < 4.0)
     tzinfo (1.2.2)
       thread_safe (~> 0.1)
     uglifier (2.7.1)
@@ -204,6 +209,7 @@ DEPENDENCIES
   therubyracer
   thor
   turbolinks
+  turnip
   uglifier (>= 1.3.0)
 
 BUNDLED WITH

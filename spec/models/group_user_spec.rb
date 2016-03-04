@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 RSpec.describe GroupUser do
   describe 'validation' do
     describe '#composite_primary_key' do

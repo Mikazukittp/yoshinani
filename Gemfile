@@ -25,6 +25,7 @@ group :development do
   gem 'capistrano-rbenv'
   gem 'capistrano-bundler'
   gem 'capistrano-passenger'
+  gem "turnip"
 end
 
 group :test do
