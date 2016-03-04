@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 RSpec.describe Payment do
   describe 'validation' do
     describe '#amount' do

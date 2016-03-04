@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 RSpec.describe 'GroupUsers', type: :request do
   let(:sign_in_user) { create(:user, email: 'sign-in-email@example.com', account: 'sign_in_user') }
   let(:env) { { UID: sign_in_user.id, TOKEN: sign_in_user.token } }

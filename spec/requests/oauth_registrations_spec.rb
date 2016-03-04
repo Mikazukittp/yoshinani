@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 RSpec.describe 'OauthRegistration', type: :request do
 
   describe 'POST /api/oauth_registration' do

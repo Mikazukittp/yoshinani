@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 RSpec.describe Group do
   describe 'validation' do
     describe '#name' do
