@@ -65,6 +65,10 @@ class User < ActiveRecord::Base
     self.token = s[0, 32]
   end
 
+  def set_reset_password_token
+    update(reset_password_token: SecureRandom.base64(10), reset_password_at: Time.now)
+  end
+
   def active_groups()
     groups.select{|group| exist_group_user_with_status(group, 'active') }.as_json(user_id: self.id)
   end
