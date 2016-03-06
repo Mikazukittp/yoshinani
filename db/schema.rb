@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160225140825) do
+ActiveRecord::Schema.define(version: 20160304111115) do
 
   create_table "group_users", force: true do |t|
     t.integer  "group_id"
@@ -92,10 +92,12 @@ ActiveRecord::Schema.define(version: 20160225140825) do
     t.string   "email"
     t.string   "password"
     t.string   "token"
-    t.integer  "role",       default: 0
+    t.integer  "role",                 default: 0
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "salt"
+    t.text     "reset_password_token"
+    t.date     "reset_password_at"
   end
 
 end
