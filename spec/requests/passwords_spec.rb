@@ -2,12 +2,14 @@ RSpec.describe 'Groups', type: :request do
   let(:sign_in_user) { create(:user, email: 'sign-in-email@example.com', account: 'sign_in_user', password: 'password1!') }
   let(:env) { { UID: sign_in_user.id, TOKEN: sign_in_user.token } }
 
-  describe 'PATCH /api/groups/:id' do
+  describe 'GET /api/passwords' do
     context '正しいパラメータを送った場合' do
       let(:params) {{
-        password: 'password1!',
-        new_password: 'password2!',
-        new_password_confirmation: 'password2!'
+        user: {
+          password: 'password1!',
+          new_password: 'password2!',
+          new_password_confirmation: 'password2!'
+        }
       }}
 
       before do
@@ -42,9 +44,11 @@ RSpec.describe 'Groups', type: :request do
     context '不正なパラメータを送った場合' do
       context 'passwordが間違っている場合' do
         let(:params) {{
-          password: 'password3!',
-          new_password: 'password2!',
-          new_password_confirmation: 'password2!'
+          user: {
+            password: 'password3!',
+            new_password: 'password2!',
+            new_password_confirmation: 'password2!'
+          }
         }}
 
         before do
@@ -64,9 +68,11 @@ RSpec.describe 'Groups', type: :request do
 
       context '確認用パスワードが入力されたパスワードと一致しない場合' do
         let(:params) {{
-          password: 'password1!',
-          new_password: 'password2!',
-          new_password_confirmation: 'password3!'
+          user: {
+            password: 'password1!',
+            new_password: 'password2!',
+            new_password_confirmation: 'password3!'
+          }
         }}
 
         before do
@@ -86,9 +92,11 @@ RSpec.describe 'Groups', type: :request do
 
       context 'パスワードが不正な値の場合' do
         let(:params) {{
-          password: 'password1!',
-          new_password: 'pass',
-          new_password_confirmation: 'pass'
+          user: {
+            password: 'password1!',
+            new_password: 'pass',
+            new_password_confirmation: 'pass'
+          }
         }}
 
         before do
