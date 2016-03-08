@@ -191,7 +191,12 @@ RSpec.describe 'Groups', type: :request do
   end
 
   describe 'PATCH /api/passwords/reset' do
-    let!(:target_user) { create(:user, account: 'target', reset_password_token: SecureRandom.base64(10)) }
+    let!(:target_user) { create(:user,
+      account: 'target',
+      reset_password_token: SecureRandom.base64(10),
+      reset_password_at: Time.now)
+    }
+
     context '正しいパラメータを送った場合' do
       let(:params) {{
         user: {
@@ -263,6 +268,35 @@ RSpec.describe 'Groups', type: :request do
 
         example '期待したデータが取得されていること' do
           expect(@json['message']).to eq '再設定用のパスワードが正しくありません'
+        end
+      end
+
+      context '有効期限が切れた再設定用パスワードの場合' do
+        let!(:target_user) { create(:user,
+          reset_password_token: SecureRandom.base64(10),
+          reset_password_at: 31.minutes.ago)
+        }
+
+        let(:params) {{
+          user: {
+            reset_password_token: target_user.reset_password_token,
+            new_password: 'hogehoge30',
+            new_password_confirmation: 'hogehoge30'
+          }
+        }}
+
+        before do
+          patch reset_api_passwords_path, params
+          @json = JSON.parse(response.body)
+        end
+
+        example '400が返ってくること' do
+          expect(response).not_to be_success
+          expect(response.status).to eq 400
+        end
+
+        example '期待したデータが取得されていること' do
+          expect(@json['message']).to eq '再設定用のパスワードの有効期限が切れています'
         end
       end
     end
