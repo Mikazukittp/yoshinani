@@ -2,13 +2,13 @@
 lock '3.4.0'
 
 set :application, 'yoshinani'
-set :repo_url, 'https://github.com/Mikazukittp/yoshinani.git'
+set :repo_url, 'git@github.com:Mikazukittp/yoshinani.git'
 
 # Default branch is :master
 # ask :branch, `git rev-parse --abbrev-ref HEAD`.chomp
 
 # Default deploy_to directory is /var/www/my_app_name
-set :deploy_to, '/var/www/html/yoshinani'
+set :deploy_to, '/var/www/html/Yoshinani'
 
 # Default value for :scm is :git
 set :scm, :git
@@ -30,7 +30,7 @@ set :passenger_restart_with_touch, false
 # set :log_level, :debug
 
 # Default value for :pty is false
-# set :pty, true
+set :pty, true
 
 # Default value for :linked_files is []
 # set :linked_files, fetch(:linked_files, []).push('config/database.yml', 'config/secrets.yml')
