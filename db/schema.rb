@@ -97,7 +97,7 @@ ActiveRecord::Schema.define(version: 20160304111115) do
     t.datetime "updated_at"
     t.string   "salt"
     t.text     "reset_password_token"
-    t.date     "reset_password_at"
+    t.datetime "reset_password_at"
   end
 
 end
