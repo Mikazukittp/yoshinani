@@ -1,4 +1,6 @@
 class Api::PasswordsController < ApplicationController
+  EXPIRATION_MINUTES_FOR_RESET_PASSWORD = 30
+
   before_action :authenticate!, only: %i(update)
   before_action :verify_old_password, only: %i(update)
   before_action :verify_password_confirmation, only: %i(update reset)
@@ -81,6 +83,11 @@ class Api::PasswordsController < ApplicationController
 
     if @user.nil?
       render json: {message: "再設定用のパスワードが正しくありません"}, status: :bad_request
+      return
+    end
+
+    if @user.reset_password_at < EXPIRATION_MINUTES_FOR_RESET_PASSWORD.minutes.ago
+      render json: {message: "再設定用のパスワードの有効期限が切れています"}, status: :bad_request
       return
     end
   end
