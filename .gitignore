@@ -23,6 +23,9 @@ config/initializers/secret_token.rb
 # Ignore seed file
 db/seeds.rb
 
+# Igonre Coverage Directory
+coverage
+
 # Ignore other unneeded files.
 # doc/
 *.swp

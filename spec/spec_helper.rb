@@ -1,6 +1,13 @@
 require 'factory_girl_rails'
 require 'turnip'
 require 'turnip/rspec'
+require 'simplecov'
+
+SimpleCov.start do
+  add_filter "/vendor/"
+  add_filter "/spec/"
+  add_filter "/config/"
+end
 
 RSpec.configure do |config|
   Turnip.type = :request
