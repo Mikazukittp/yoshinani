@@ -16,12 +16,12 @@ class ApplicationController < ActionController::Base
 
   def render_404(e = nil)
     logger.info "Rendering 404 with exception: #{e.message}" if e
-    render json: { error: '404 error' }, status: 404
+    render json: { message: "404 error #{e.try!(:message)}" }, status: 404
   end
 
   def render_500(e = nil)
-    logger.info "Rendering 500 with exception: #{e.message}" if e
-    render json: { error: '500 error' }, status: 500
+    logger.error "Rendering 500 with exception: #{e.message}" if e
+    render json: { message: "500 error #{e.try!(:message)}" }, status: 500
   end
 
   # 認証処理をする
@@ -30,10 +30,10 @@ class ApplicationController < ActionController::Base
     uid = request.headers[:UID]
     token = request.headers[:TOKEN]
     @user = User.find_by(id: uid)
-    if @user.present? and token == @user.token
+    if @user.present? && token == @user.token
       return true
     else
-      render json: { error: "認証に失敗しました" }, status: :unauthorized
+      render json: { message: "認証に失敗しました" }, status: :unauthorized
       return false
     end
   end

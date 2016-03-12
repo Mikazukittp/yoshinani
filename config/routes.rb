@@ -28,4 +28,6 @@ Rails.application.routes.draw do
       resources :oauth_registrations, only: %i(create)
     end
   end
+
+  get '*path', controller: 'application', action: 'render_404'
 end
