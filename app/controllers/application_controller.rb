@@ -30,7 +30,7 @@ class ApplicationController < ActionController::Base
     uid = request.headers[:UID]
     token = request.headers[:TOKEN]
     @user = User.find_by(id: uid)
-    if @user.present? and token == @user.token
+    if @user.present? && token == @user.token
       return true
     else
       render json: { error: "認証に失敗しました" }, status: :unauthorized
