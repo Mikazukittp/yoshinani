@@ -3,29 +3,6 @@ require 'turnip'
 require 'turnip/rspec'
 require 'simplecov'
 
-
-  # require 'simplecov'
-  # SimpleCov.start 'rails'
-  # SimpleCov.coverage_dir 'coverage/rspec'
-
-  # all_files = Dir['**/*.rb']
-  # base_result = {}
-  # all_files.each do |file|
-  #   absolute = File::expand_path(file)
-  #   lines = File.readlines(absolute, :encoding => 'UTF-8')
-  #   base_result[absolute] = lines.map do |l|
-  #     l.strip!
-  #     l.scrub!('?')
-  #     l.empty? || l =~ /^else$/ || l =~ /^end$/ || l[0] == '#' ? nil : 0
-  #   end
-  # end
-
-  # SimpleCov.at_exit do
-  #   merged = SimpleCov::Result.new(Coverage.result).original_result.merge_resultset(base_result)
-  #   result = SimpleCov::Result.new(merged)
-  #   result.format!
-  # end
-
 SimpleCov.start do
   add_filter "/vendor/"
   add_filter "/spec/"
