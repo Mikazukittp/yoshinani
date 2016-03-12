@@ -267,7 +267,7 @@ RSpec.describe 'Groups', type: :request do
         end
 
         example '期待したデータが取得されていること' do
-          expect(@json['message']).to eq '再設定用のパスワードが正しくありません'
+          expect(@json['message']).to eq '再設定用の認証キーが正しくありません'
         end
       end
 
@@ -296,7 +296,7 @@ RSpec.describe 'Groups', type: :request do
         end
 
         example '期待したデータが取得されていること' do
-          expect(@json['message']).to eq '再設定用のパスワードの有効期限が切れています'
+          expect(@json['message']).to eq '再設定用の認証キーの有効期限が切れています'
         end
       end
     end

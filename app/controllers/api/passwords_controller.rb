@@ -82,12 +82,12 @@ class Api::PasswordsController < ApplicationController
     @user = User.find_by(reset_password_token: params[:user][:reset_password_token])
 
     if @user.nil?
-      render json: {message: "再設定用のパスワードが正しくありません"}, status: :bad_request
+      render json: {message: "再設定用の認証キーが正しくありません"}, status: :bad_request
       return
     end
 
     if @user.reset_password_at < EXPIRATION_MINUTES_FOR_RESET_PASSWORD.minutes.ago
-      render json: {message: "再設定用のパスワードの有効期限が切れています"}, status: :bad_request
+      render json: {message: "再設定用の認証キーの有効期限が切れています"}, status: :bad_request
       return
     end
   end
