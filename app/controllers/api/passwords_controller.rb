@@ -2,6 +2,7 @@ class Api::PasswordsController < ApplicationController
   EXPIRATION_MINUTES_FOR_RESET_PASSWORD = 30
 
   before_action :authenticate!, only: %i(update)
+  before_action :verify_params
   before_action :verify_old_password, only: %i(update)
   before_action :verify_password_confirmation, only: %i(update reset)
   before_action :set_user_by_account_and_email, only: %i(init)
@@ -36,6 +37,12 @@ class Api::PasswordsController < ApplicationController
   end
 
   private
+
+  def verify_params
+    if params[:user].blank?
+      render json: {message: "パラメータの形式が不正です"}, status: :bad_request
+    end
+  end
 
   def verify_old_password
     unless @user.authoricate(params[:user][:password].strip)

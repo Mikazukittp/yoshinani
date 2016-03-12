@@ -104,13 +104,35 @@ RSpec.describe 'Groups', type: :request do
           @json = JSON.parse(response.body)
         end
 
-        example '500が返ってくること' do
+        example '400が返ってくること' do
           expect(response).not_to be_success
           expect(response.status).to eq 400
         end
 
         example '適切なエラーメッセージが返されること' do
           expect(@json['message']).to eq 'パスワードの更新に失敗しました'
+        end
+      end
+
+      context 'パラメータが不正な形式の場合' do
+        let(:params) {{
+          password: 'password1!',
+          new_password: 'pass',
+          new_password_confirmation: 'pass'
+        }}
+
+        before do
+          patch api_passwords_path, params, env
+          @json = JSON.parse(response.body)
+        end
+
+        example '400が返ってくること' do
+          expect(response).not_to be_success
+          expect(response.status).to eq 400
+        end
+
+        example '適切なエラーメッセージが返されること' do
+          expect(@json['message']).to eq 'パラメータの形式が不正です'
         end
       end
     end
