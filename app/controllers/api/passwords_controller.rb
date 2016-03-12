@@ -5,7 +5,7 @@ class Api::PasswordsController < ApplicationController
   before_action :verify_params
   before_action :verify_old_password, only: %i(update)
   before_action :verify_password_confirmation, only: %i(update reset)
-  before_action :set_user_by_account_and_email, only: %i(init)
+  before_action :set_user_by_email, only: %i(init)
   before_action :set_user_by_reset_password_token, only: %i(reset)
   before_action :set_new_password_and_valid, only: %i(update reset)
 
@@ -76,8 +76,8 @@ class Api::PasswordsController < ApplicationController
     user.hash_password
   end
 
-  def set_user_by_account_and_email
-    @user = User.find_by(account: params[:user][:account], email: params[:user][:email])
+  def set_user_by_email
+    @user = User.find_by(email: params[:user][:email])
 
     if @user.nil?
       render json: {message: "一致する情報はみつかりませんでした。"}, status: :bad_request

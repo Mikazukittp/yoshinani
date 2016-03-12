@@ -143,7 +143,6 @@ RSpec.describe 'Groups', type: :request do
     context '正しいパラメータを送った場合' do
       let(:params) {{
         user: {
-          account: target_user.account,
           email: target_user.email
         }
       }}
@@ -164,33 +163,9 @@ RSpec.describe 'Groups', type: :request do
     end
 
     context '不正なパラメータを送った場合' do
-      context 'accountが間違っている場合' do
-        let(:params) {{
-          user: {
-            account: 'hogehoge',
-            email: target_user.email
-          }
-        }}
-
-        before do
-          post init_api_passwords_path, params
-          @json = JSON.parse(response.body)
-        end
-
-        example '400が返ってくること' do
-          expect(response).not_to be_success
-          expect(response.status).to eq 400
-        end
-
-        example '期待したデータが取得されていること' do
-          expect(@json['message']).to eq '一致する情報はみつかりませんでした。'
-        end
-      end
-
       context 'emailが間違っている場合' do
         let(:params) {{
           user: {
-            account: target_user.account,
             email: 'hoge@example.com'
           }
         }}
