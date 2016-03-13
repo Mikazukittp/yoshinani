@@ -1,4 +1,7 @@
 Rails.application.routes.draw do
+  mount RailsAdmin::Engine => '/rails_admin', as: 'rails_admin'
+  devise_for :admin_users
+
   namespace :api, defaults: { format: :json } do
     scope :v1 do
       resources :users do
