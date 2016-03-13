@@ -13,6 +13,8 @@ gem 'date_validator'
 gem 'thor'
 gem "squeel"
 gem 'sdoc', '~> 0.4.0',          group: :doc
+gem 'devise'
+gem 'rails_admin'
 
 group :production do
   gem 'therubyracer'
