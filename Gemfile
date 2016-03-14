@@ -15,6 +15,7 @@ gem "squeel"
 gem 'sdoc', '~> 0.4.0',          group: :doc
 gem 'devise'
 gem 'rails_admin'
+gem 'aws-sdk'
 
 group :production do
   gem 'therubyracer'
