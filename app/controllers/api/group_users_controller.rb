@@ -1,7 +1,12 @@
 class Api::GroupUsersController < ApplicationController
+  INVITED_MESSAGE = '{"GCM": "{ \"data\": { \"message\": \"新規グループに招待されました\", \"type\": \"invited\" } }"}'.freeze
+
+  include PushNortification
+
   before_action :authenticate!
   before_action :set_group
   before_action :set_group_user, only: %i(accept destroy)
+  after_action :send_invited_nortification, only: %i(create)
 
   def index
     render json: @group.users.includes(:totals).as_json(group_id: @group.id), status: :ok
@@ -63,6 +68,15 @@ class Api::GroupUsersController < ApplicationController
   def group_user_params
     params.require(:group_user).map do |group_user|
       group_user.permit(:user_id)
+    end
+  end
+
+  def send_invited_nortification
+    invited_user_ids = params[:group_user].map{ |group_user| group_user['user_id'] }
+
+    invited_user_ids.each do |id|
+      invited_user = User.includes(:nortification_tokens).find_by(id)
+      send_nortification(invited_user, INVITED_MESSAGE)
     end
   end
 end

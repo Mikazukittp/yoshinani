@@ -1,8 +1,13 @@
 class Api::PaymentsController < ApplicationController
+  NEW_POST_MESSAGE = '{"GCM": "{ \"data\": { \"message\": \"グループに新規投稿がありました\", \"type\": \"post\" } }"}'.freeze
+
+  include PushNortification
+
   before_action :authenticate!
   before_action :deny_first_and_last_params, only: %i(index)
   before_action :set_payment, only: %i(show update destroy)
   before_action :set_group, only: %i(index)
+  after_action :send_new_post_nortification, only: %i(create)
 
   def index
     payments = @group.payments.includes(paid_user: [:totals, groups: :group_users],
@@ -152,5 +157,14 @@ class Api::PaymentsController < ApplicationController
       total.to_pay += (amount.to_f / participants_ids.size).round(3)
       total.save!
     }
+  end
+
+  def send_new_post_nortification
+    participants_ids = params[:payment][:participants_ids]
+
+    participants_ids.each do |id|
+      participant = User.includes(:nortification_tokens).find_by(id: id)
+      send_nortification(participant, NEW_POST_MESSAGE)
+    end
   end
 end
