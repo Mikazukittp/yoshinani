@@ -1,5 +1,6 @@
 source 'https://rubygems.org'
 
+gem 'enumerize'
 gem 'rails', '4.1.8'
 gem 'mysql2'
 gem 'sass-rails', '~> 4.0.3'
