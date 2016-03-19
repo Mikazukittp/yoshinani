@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160314135411) do
+ActiveRecord::Schema.define(version: 20160319054754) do
 
   create_table "admin_users", force: true do |t|
     t.string   "email",               default: "", null: false
@@ -45,6 +45,16 @@ ActiveRecord::Schema.define(version: 20160314135411) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  create_table "nortification_tokens", force: true do |t|
+    t.text     "device_token"
+    t.string   "device_type"
+    t.integer  "user_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "nortification_tokens", ["user_id"], name: "index_nortification_tokens_on_user_id", using: :btree
 
   create_table "oauth_registrations", force: true do |t|
     t.integer  "user_id",        null: false
@@ -113,7 +123,6 @@ ActiveRecord::Schema.define(version: 20160314135411) do
     t.string   "salt"
     t.text     "reset_password_token"
     t.datetime "reset_password_at"
-    t.text     "device_token"
   end
 
 end
