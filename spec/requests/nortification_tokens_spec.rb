@@ -33,7 +33,7 @@ RSpec.describe 'NortificationToken', type: :request do
     let(:params) {
       {
         nortification_token: {
-          old_device_token: old_token.device_token,
+          auth_device_token: old_token.device_token,
           device_token: 'hogehoge',
           device_type: 'ios'
         }
@@ -60,7 +60,7 @@ RSpec.describe 'NortificationToken', type: :request do
     let(:params) {
       {
         nortification_token: {
-          old_device_token: old_token.device_token
+          auth_device_token: old_token.device_token
         }
       }
     }

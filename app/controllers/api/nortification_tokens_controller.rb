@@ -33,7 +33,7 @@ class Api::NortificationTokensController < ApplicationController
   end
 
   def set_nortification_token
-    @nortification_token = @user.nortification_tokens.find_by(device_token: params[:nortification_token][:old_device_token])
+    @nortification_token = @user.nortification_tokens.find_by(device_token: params[:nortification_token][:auth_device_token])
     unless @nortification_token.present?
       render json: {message: "指定されたPUSHキーは見つかりません"}, status: :bad_request
       return
