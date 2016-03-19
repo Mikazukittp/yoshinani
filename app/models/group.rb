@@ -12,10 +12,10 @@ class Group < ActiveRecord::Base
   end
 
   def active_users()
-    users.includes(:group_users).where(group_users: {status: 'active'}).as_json(group_id: self.id)
+    users.where(group_users: {status: 'active'}).as_json(group_id: self.id)
   end
 
   def invited_users()
-    users.includes(:group_users).where(group_users: {status: 'inviting'}).as_json(group_id: self.id)
+    users.where(group_users: {status: 'inviting'}).as_json(group_id: self.id)
   end
 end
