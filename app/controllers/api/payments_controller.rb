@@ -1,13 +1,10 @@
 class Api::PaymentsController < ApplicationController
-  NEW_POST_MESSAGE = '{"GCM": "{ \"data\": { \"message\": \"グループに新規投稿がありました\", \"type\": \"post\" } }"}'.freeze
-
   include PushNortification
 
   before_action :authenticate!
   before_action :deny_first_and_last_params, only: %i(index)
   before_action :set_payment, only: %i(show update destroy)
   before_action :set_group, only: %i(index)
-  after_action :send_new_post_nortification, only: %i(create)
 
   def index
     payments = @group.payments.includes(paid_user: [:totals, groups: :group_users],
@@ -41,6 +38,9 @@ class Api::PaymentsController < ApplicationController
       }
       # 暫定総額の設定
       set_total(payment.amount, payment.paid_user_id, payment.participants.pluck(:id), payment.group_id)
+
+      send_new_post_nortification!(payment)
+
       # 結果の返却
       render json: payment.to_json(include: [:group, :paid_user, :participants]), status: :created
     end
@@ -159,12 +159,16 @@ class Api::PaymentsController < ApplicationController
     }
   end
 
-  def send_new_post_nortification
+  def send_new_post_nortification!(payment)
     participants_ids = params[:payment][:participants_ids]
+    payment_for_push = JSON.parse(payment.to_json(include: [:group, :paid_user, :participants]))
+
+    message = {data: {message: 'グループに新規投稿がありました', type: 'new_post', payment: payment_for_push}}
+    json_message = JSON.generate({GCM: JSON.generate(message)})
 
     participants_ids.each do |id|
       participant = User.includes(:nortification_tokens).find_by(id: id)
-      send_nortification(participant, NEW_POST_MESSAGE)
+      send_nortification(participant, json_message)
     end
   end
 end
