@@ -163,12 +163,15 @@ class Api::PaymentsController < ApplicationController
     participants_ids = params[:payment][:participants_ids]
     payment_for_push = JSON.parse(payment.to_json(include: [:group, :paid_user, :participants]))
 
-    message = {data: {message: 'グループに新規投稿がありました', type: 'new_post', payment: payment_for_push}}
-    json_message = JSON.generate({GCM: JSON.generate(message)})
+    message = 'グループに新規投稿がありました'
+    type = 'new_post'
+    custom_data = {payment: payment_for_push}
 
     participants_ids.each do |id|
       participant = User.includes(:nortification_tokens).find_by(id: id)
-      send_nortification(participant, json_message)
+      next unless participant.present?
+      
+      send_nortification(participant, message, type, custom_data)
     end
   end
 end
