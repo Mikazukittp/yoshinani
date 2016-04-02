@@ -1,7 +1,7 @@
 module PushNortification
   extend ActiveSupport::Concern
 
-  def send_nortification(user, message)
+  def send_nortification(user, message, type, custom_data)
     return unless user.nortification_tokens.present?
 
     begin
@@ -10,13 +10,31 @@ module PushNortification
                          :region => ENV['AWS_REGION'])
 
       user.nortification_tokens.each do |nortification_token|
+        application_arn = nil
+        json_message = nil
+
+        case nortification_token.device_type
+        when 'android'
+          application_arn = ENV['GCM_SNS_APPLICATION_ARN']
+
+          orig_message = {data: {message: message, type: type}.merge(custom_data)}
+          json_message = JSON.generate({GCM: JSON.generate(orig_message)})
+        when 'ios'
+          application_arn = ENV['APNS_SNS_APPLICATION_ARN']
+          p application_arn
+          target_apns = Settings.aws.sns.target_apns.to_s
+
+          orig_message = {aps: {alert: message, type: type}.merge(custom_data)}
+          json_message = JSON.generate({target_apns => JSON.generate(orig_message)})
+        end
+
         response = sns.create_platform_endpoint(
-                              platform_application_arn: ENV['AWS_SNS_APPLICATION_ARN'],
+                              platform_application_arn: application_arn,
                               token: nortification_token.device_token)
 
         endpoint_arn = response[:endpoint_arn]
 
-        sns.publish(target_arn: endpoint_arn, message: message, message_structure: 'json')
+        sns.publish(target_arn: endpoint_arn, message: json_message, message_structure: 'json')
         Rails.logger.info "publish success"
       end
 
