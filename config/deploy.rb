@@ -23,6 +23,11 @@ set :rbenv_roles, :all # default value
 
 set :passenger_restart_with_touch, false
 
+# slack用の記述
+set :slack_url, 'https://hooks.slack.com/services/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'
+set :slack_channel, '#yoshinani'
+set :slack_emoji, ':surfer:'
+
 # Default value for :format is :pretty
 # set :format, :pretty
 
