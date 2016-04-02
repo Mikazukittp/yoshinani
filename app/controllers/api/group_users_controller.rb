@@ -72,12 +72,13 @@ class Api::GroupUsersController < ApplicationController
   def send_invited_nortification!(group)
     invited_user_ids = params[:group_user].map{ |group_user| group_user['user_id'] }
 
-    message = {data: {message: '新規グループに招待されました', type: 'invitation', group: {id: group.id, name: group.name}}}
-    json_message = JSON.generate({GCM: JSON.generate(message)})
+    message = '新規グループに招待されました'
+    type = 'invitation'
+    custom_data = {group: {id: group.id, name: group.name}}
 
     invited_user_ids.each do |id|
       invited_user = User.includes(:nortification_tokens).find_by(id)
-      send_nortification(invited_user, json_message)
+      send_nortification(invited_user, message, type, custom_data)
     end
   end
 end
