@@ -77,7 +77,7 @@ class Api::GroupUsersController < ApplicationController
     custom_data = {group: {id: group.id, name: group.name}}
 
     invited_user_ids.each do |id|
-      invited_user = User.includes(:notification_tokens).find_by(id)
+      invited_user = User.includes(:notification_tokens).find_by(id: id)
       send_notification(invited_user, message, type, custom_data)
     end
   end
