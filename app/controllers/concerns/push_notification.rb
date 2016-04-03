@@ -1,20 +1,20 @@
-module PushNortification
+module PushNotification
   extend ActiveSupport::Concern
 
-  def send_nortification(user, message, type, custom_data)
-    return unless user.nortification_tokens.present?
+  def send_notification(user, message, type, custom_data)
+    return unless user.notification_tokens.present?
 
     begin
       sns = Aws::SNS::Client.new(:access_key_id => ENV['AWS_ACCESS_KEY_ID'],
                          :secret_access_key => ENV['AWS_SECRET_ACCESS_KEY'],
                          :region => ENV['AWS_REGION'])
 
-      user.nortification_tokens.each do |nortification_token|
+      user.notification_tokens.each do |notification_token|
         begin
           application_arn = nil
           json_message = nil
 
-          case nortification_token.device_type
+          case notification_token.device_type
           when 'android'
             application_arn = ENV['GCM_SNS_APPLICATION_ARN']
 
@@ -31,7 +31,7 @@ module PushNortification
 
           response = sns.create_platform_endpoint(
                                 platform_application_arn: application_arn,
-                                token: nortification_token.device_token)
+                                token: notification_token.device_token)
 
           endpoint_arn = response[:endpoint_arn]
 

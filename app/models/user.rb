@@ -6,7 +6,7 @@ class User < ActiveRecord::Base
   has_many :group_users
   has_many :groups, through: :group_users
   has_many :oauth_registrations
-  has_many :nortification_tokens
+  has_many :notification_tokens
 
   has_many :totals
   has_many :paid_payments, class_name: 'Payment', foreign_key: :paid_user_id

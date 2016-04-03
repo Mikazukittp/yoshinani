@@ -1,5 +1,5 @@
 class Api::GroupUsersController < ApplicationController
-  include PushNortification
+  include PushNotification
 
   before_action :authenticate!
   before_action :set_group
@@ -19,7 +19,7 @@ class Api::GroupUsersController < ApplicationController
         @group_user.save!
       end
     end
-    send_invited_nortification!(@group)
+    send_invited_notification!(@group)
 
     render json: @group, status: :ok
 
@@ -69,7 +69,7 @@ class Api::GroupUsersController < ApplicationController
     end
   end
 
-  def send_invited_nortification!(group)
+  def send_invited_notification!(group)
     invited_user_ids = params[:group_user].map{ |group_user| group_user['user_id'] }
 
     message = '新規グループに招待されました'
@@ -77,8 +77,8 @@ class Api::GroupUsersController < ApplicationController
     custom_data = {group: {id: group.id, name: group.name}}
 
     invited_user_ids.each do |id|
-      invited_user = User.includes(:nortification_tokens).find_by(id)
-      send_nortification(invited_user, message, type, custom_data)
+      invited_user = User.includes(:notification_tokens).find_by(id)
+      send_notification(invited_user, message, type, custom_data)
     end
   end
 end

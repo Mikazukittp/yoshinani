@@ -29,7 +29,7 @@ Rails.application.routes.draw do
         end
       end
       resources :oauth_registrations, only: %i(create)
-      resource :nortification_tokens, only: %i(create update destroy)
+      resource :notification_tokens, only: %i(create update destroy)
     end
   end
 

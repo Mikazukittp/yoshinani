@@ -1,4 +1,4 @@
-class NortificationToken < ActiveRecord::Base
+class NotificationToken < ActiveRecord::Base
   extend Enumerize
 
   belongs_to :user

@@ -1,6 +1,6 @@
-class CreateNortificationTokens < ActiveRecord::Migration
+class CreateNotificationTokens < ActiveRecord::Migration
   def change
-    create_table :nortification_tokens do |t|
+    create_table :notification_tokens do |t|
       t.text :device_token, unique: true
       t.string :device_type
       t.references :user, index: true

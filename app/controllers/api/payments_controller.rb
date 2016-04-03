@@ -1,5 +1,5 @@
 class Api::PaymentsController < ApplicationController
-  include PushNortification
+  include PushNotification
 
   before_action :authenticate!
   before_action :deny_first_and_last_params, only: %i(index)
@@ -39,7 +39,7 @@ class Api::PaymentsController < ApplicationController
       # 暫定総額の設定
       set_total(payment.amount, payment.paid_user_id, payment.participants.pluck(:id), payment.group_id)
 
-      send_new_post_nortification!(payment)
+      send_new_post_notification!(payment)
 
       # 結果の返却
       render json: payment.to_json(include: [:group, :paid_user, :participants]), status: :created
@@ -159,7 +159,7 @@ class Api::PaymentsController < ApplicationController
     }
   end
 
-  def send_new_post_nortification!(payment)
+  def send_new_post_notification!(payment)
     participants_ids = params[:payment][:participants_ids]
     payment_for_push = JSON.parse(payment.to_json(include: [:group, :paid_user, :participants]))
 
@@ -168,10 +168,10 @@ class Api::PaymentsController < ApplicationController
     custom_data = {payment: payment_for_push}
 
     participants_ids.each do |id|
-      participant = User.includes(:nortification_tokens).find_by(id: id)
+      participant = User.includes(:notification_tokens).find_by(id: id)
       next unless participant.present?
-      
-      send_nortification(participant, message, type, custom_data)
+
+      send_notification(participant, message, type, custom_data)
     end
   end
 end

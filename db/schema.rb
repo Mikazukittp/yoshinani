@@ -46,7 +46,7 @@ ActiveRecord::Schema.define(version: 20160319054754) do
     t.datetime "updated_at"
   end
 
-  create_table "nortification_tokens", force: true do |t|
+  create_table "notification_tokens", force: true do |t|
     t.text     "device_token"
     t.string   "device_type"
     t.integer  "user_id"
@@ -54,7 +54,7 @@ ActiveRecord::Schema.define(version: 20160319054754) do
     t.datetime "updated_at"
   end
 
-  add_index "nortification_tokens", ["user_id"], name: "index_nortification_tokens_on_user_id", using: :btree
+  add_index "notification_tokens", ["user_id"], name: "index_notification_tokens_on_user_id", using: :btree
 
   create_table "oauth_registrations", force: true do |t|
     t.integer  "user_id",        null: false
