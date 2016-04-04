@@ -161,11 +161,11 @@ class Api::PaymentsController < ApplicationController
 
   def send_new_post_notification!(payment)
     participants_ids = params[:payment][:participants_ids]
-    payment_for_push = JSON.parse(payment.to_json(include: [:group, :paid_user, :participants]))
+    paid_user_name = payment.paid_user.username || payment.paid_user.account
 
-    message = 'グループに新規投稿がありました'
-    type = 'new_post'
-    custom_data = {payment: payment_for_push}
+    message = "#{payment.group.name}に#{paid_user_name}さんが新しい精算を追加しました"
+    type = 'new_payment'
+    custom_data = {payment_id: payment.id, group_id: payment.group.id}
 
     participants_ids.each do |id|
       participant = User.includes(:notification_tokens).find_by(id: id)
