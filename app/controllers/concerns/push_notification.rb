@@ -28,6 +28,7 @@ module PushNotification
             orig_message = {aps: {alert: message, type: type}.merge(custom_data)}
             json_message = JSON.generate({target_apns => JSON.generate(orig_message)})
           end
+          Rails.logger.info json_message
 
           response = sns.create_platform_endpoint(
                                 platform_application_arn: application_arn,
