@@ -34,5 +34,6 @@ production:
   <<: *default
   database: yoshinani_production
   socket: /var/lib/mysql/mysql.sock
-#  username: yoshinani
-#  password: <%= ENV['YOSHINANI_DATABASE_PASSWORD'] %>
+  username: rdsuser
+  password: <%= ENV['YOSHINANI_DATABASE_PASSWORD'] %>
+  host: <%= ENV['YOSHINANI_DATABASE_HOST'] %>
