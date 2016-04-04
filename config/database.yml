@@ -35,5 +35,5 @@ production:
   database: yoshinani_production
   socket: /var/lib/mysql/mysql.sock
   username: rdsuser
-  password: <%= ENV['YOSHINANI_DATABASE_PASSWORD'] %>
-  host: <%= ENV['YOSHINANI_DATABASE_HOST'] %>
+  password: 1rhd2014
+  host: rdsprod.cuxsreyhnutn.ap-northeast-1.rds.amazonaws.com
