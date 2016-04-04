@@ -1,5 +1,6 @@
 source 'https://rubygems.org'
 
+gem 'enumerize'
 gem 'rails', '4.1.8'
 gem 'mysql2'
 gem 'sass-rails', '~> 4.0.3'
@@ -15,6 +16,8 @@ gem "squeel"
 gem 'sdoc', '~> 0.4.0',          group: :doc
 gem 'devise'
 gem 'rails_admin'
+gem 'aws-sdk'
+gem 'config'
 
 group :production do
   gem 'therubyracer'

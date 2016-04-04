@@ -1,4 +1,6 @@
 class Api::GroupUsersController < ApplicationController
+  include PushNotification
+
   before_action :authenticate!
   before_action :set_group
   before_action :set_group_user, only: %i(accept destroy)
@@ -17,6 +19,7 @@ class Api::GroupUsersController < ApplicationController
         @group_user.save!
       end
     end
+    send_invited_notification!(@group)
 
     render json: @group, status: :ok
 
@@ -63,6 +66,19 @@ class Api::GroupUsersController < ApplicationController
   def group_user_params
     params.require(:group_user).map do |group_user|
       group_user.permit(:user_id)
+    end
+  end
+
+  def send_invited_notification!(group)
+    invited_user_ids = params[:group_user].map{ |group_user| group_user['user_id'] }
+
+    message = "新しいグループ「#{group.name}」に招待されました"
+    type = 'invitation'
+    custom_data = {group_id: group.id}
+
+    invited_user_ids.each do |id|
+      invited_user = User.includes(:notification_tokens).find_by(id: id)
+      send_notification(invited_user, message, type, custom_data)
     end
   end
 end

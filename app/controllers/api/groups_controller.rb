@@ -22,7 +22,7 @@ class Api::GroupsController < ApplicationController
       render json: @group, status: :ok
 
     rescue ActiveRecord::RecordInvalid => invalid
-      render json: {message: "グループの作成に成功しました" ,errors: invalid.record.errors.messages}, status: :internal_server_error
+      render json: {message: "グループの作成に失敗しました" , errors: invalid.record.errors.messages}, status: :internal_server_error
     end
   end
 

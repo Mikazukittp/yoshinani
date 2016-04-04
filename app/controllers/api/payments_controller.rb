@@ -1,4 +1,6 @@
 class Api::PaymentsController < ApplicationController
+  include PushNotification
+
   before_action :authenticate!
   before_action :deny_first_and_last_params, only: %i(index)
   before_action :set_payment, only: %i(show update destroy)
@@ -36,6 +38,9 @@ class Api::PaymentsController < ApplicationController
       }
       # 暫定総額の設定
       set_total(payment.amount, payment.paid_user_id, payment.participants.pluck(:id), payment.group_id)
+
+      send_new_post_notification!(payment)
+
       # 結果の返却
       render json: payment.to_json(include: [:group, :paid_user, :participants]), status: :created
     end
@@ -152,5 +157,21 @@ class Api::PaymentsController < ApplicationController
       total.to_pay += (amount.to_f / participants_ids.size).round(3)
       total.save!
     }
+  end
+
+  def send_new_post_notification!(payment)
+    participants_ids = params[:payment][:participants_ids]
+    paid_user_name = payment.paid_user.username || payment.paid_user.account
+
+    message = "#{payment.group.name}に#{paid_user_name}さんが新しい精算を追加しました"
+    type = 'new_payment'
+    custom_data = {payment_id: payment.id, group_id: payment.group.id}
+
+    participants_ids.each do |id|
+      participant = User.includes(:notification_tokens).find_by(id: id)
+      next unless participant.present?
+
+      send_notification(participant, message, type, custom_data)
+    end
   end
 end

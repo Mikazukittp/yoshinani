@@ -51,3 +51,11 @@ ja:
         password: パスワード
         role: ロール
         <<: *timestamps
+      notification_token:
+        device_token: デバイストークン
+        device_type: デバイスタイプ
+  enumerize:
+    notification_token:
+      device_type:
+        ios: "ios"
+        android: "android"
