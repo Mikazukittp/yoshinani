@@ -6,7 +6,8 @@
 server '52.193.62.129', user: 'ec2-user', roles: %w{app db web},  ssh_options: {
   user: 'ec2-user',
   keys: %w(~/.ssh/mikazuki-yoshinani.pem),
-  auth_methods: %w(publickey)
+  auth_methods: %w(publickey),
+  port: 45621
 }
 
 # server 'example.com', user: 'deploy', roles: %w{app web}, other_property: :other_value
