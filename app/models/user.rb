@@ -3,6 +3,9 @@ require 'digest/md5'
 class User < ActiveRecord::Base
   VALID_EMAIL_REGEX =  /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
 
+  mount_uploader :icon_img, IconImgUploader
+
+
   has_many :group_users
   has_many :groups, through: :group_users
   has_many :oauth_registrations
