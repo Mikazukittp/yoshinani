@@ -19,6 +19,11 @@ gem 'rails_admin'
 gem 'aws-sdk'
 gem 'config'
 
+# updload img to s3
+gem 'carrierwave'
+gem 'rmagick'
+gem 'fog'
+
 group :production do
   gem 'therubyracer'
 end
