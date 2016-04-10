@@ -13,7 +13,7 @@ class IconImgUploader < CarrierWave::Uploader::Base
   process :convert => 'jpg'
 
   # 画像のサイズを変更
- process :resize_to_limit => [500, 500]
+ process :resize_to_fill => [500, 500, gravity = ::Magick::CenterGravity]
 
   # Choose what kind of storage to use for this uploader:
   # storage :file
