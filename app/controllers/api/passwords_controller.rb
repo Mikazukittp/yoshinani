@@ -1,13 +1,22 @@
 class Api::PasswordsController < ApplicationController
   EXPIRATION_MINUTES_FOR_RESET_PASSWORD = 30
 
-  before_action :authenticate!, only: %i(update)
+  before_action :authenticate!, only: %i(create update)
   before_action :verify_params
+  before_action :verify_exist_password_user, only: %i(create)
   before_action :verify_old_password, only: %i(update)
-  before_action :verify_password_confirmation, only: %i(update reset)
+  before_action :verify_password_confirmation, only: %i(create update reset)
   before_action :set_user_by_email, only: %i(init)
   before_action :set_user_by_reset_password_token, only: %i(reset)
-  before_action :set_new_password_and_valid, only: %i(update reset)
+  before_action :set_new_password_and_valid, only: %i(create update reset)
+
+  def create
+    if @user.save
+      render json: @user, status: :ok
+    else
+      render json: {message: "パスワードの作成に失敗しました", errors: @user.errors.messages}, status: :internal_server_error
+    end
+  end
 
   def update
     if @user.save
@@ -47,6 +56,12 @@ class Api::PasswordsController < ApplicationController
   def verify_old_password
     unless @user.authoricate(params[:user][:password].strip)
       render json: {message: "パスワードが正しくありません"}, status: :bad_request
+    end
+  end
+
+  def verify_exist_password_user
+    if @user.password.present?
+      render json: {message: "すでにパスワードが登録されています"}, status: :bad_request
     end
   end
 

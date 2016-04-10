@@ -2,6 +2,56 @@ RSpec.describe 'Groups', type: :request do
   let(:sign_in_user) { create(:user, email: 'sign-in-email@example.com', account: 'sign_in_user', password: 'password1!') }
   let(:env) { { UID: sign_in_user.id, TOKEN: sign_in_user.token } }
 
+  describe 'POST /api/passwords' do
+    let(:oauth_user) { create(:user, account: 'oauth_user', password: nil) }
+    let(:oauth_user_env) { { UID: oauth_user.id, TOKEN: oauth_user.token } }
+
+    context '正しいパラメータを送った場合' do
+      let(:params) {{
+        user: {
+          new_password: 'password2!',
+          new_password_confirmation: 'password2!'
+        }
+      }}
+
+      before do
+        post api_passwords_path, params, oauth_user_env
+        @json = JSON.parse(response.body)
+      end
+
+      example '200が返ってくること' do
+        expect(response).to be_success
+        expect(response.status).to eq 200
+      end
+
+      example '期待したデータが取得されていること' do
+        expect(@json['account']).to eq 'oauth_user'
+      end
+    end
+
+    context 'すでにパスワードが存在するユーザーの場合' do
+      let(:params) {{
+        user: {
+          new_password: 'password2!',
+          new_password_confirmation: 'password2!'
+        }
+      }}
+
+      before do
+        post api_passwords_path, params, env
+        @json = JSON.parse(response.body)
+      end
+
+      example '400が返ってくること' do
+        expect(response).not_to be_success
+        expect(response.status).to eq 400
+      end
+
+      example '期待したデータが取得されていること' do
+        expect(@json['message']).to eq 'すでにパスワードが登録されています'
+      end
+    end
+  end
   describe 'PATCH /api/passwords' do
     context '正しいパラメータを送った場合' do
       let(:params) {{
