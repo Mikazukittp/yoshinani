@@ -26,13 +26,7 @@ class Api::UsersController < ApplicationController
   end
 
   def update
-    # OAuth登録直後のCSはpasswordがnilなのでupdateでハッシュ化する必要がある
-    if @user.oauth_registration_and_no_attribute?
-      @user.attributes = user_params
-      @user.hash_password
-    else
-      @user.attributes = user_params
-    end
+    @user.attributes = user_params
 
     if @user.save
       render json: @user, status: :ok

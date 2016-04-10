@@ -4,5 +4,10 @@ FactoryGirl.define do
     password 'password1!'
     email 'ganbaruhito@example.com'
     username 'ganbaruhito'
+
+    # save時にvalidationをスキップする
+    to_create do |instance|
+      instance.save validate: false
+    end 
   end
 end

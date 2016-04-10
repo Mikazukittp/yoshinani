@@ -22,7 +22,7 @@ Rails.application.routes.draw do
         end
       end
       resources :payments
-      resource :passwords, only: %i(update) do
+      resource :passwords, only: %i(create update) do
         collection do
           post :init
           patch :reset

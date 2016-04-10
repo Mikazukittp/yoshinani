@@ -169,7 +169,7 @@ class Api::PaymentsController < ApplicationController
 
     participants_ids.each do |id|
       participant = User.includes(:notification_tokens).find_by(id: id)
-      next unless participant.present?
+      next if participant.blank? || id == payment.paid_user.id
 
       send_notification(participant, message, type, custom_data)
     end

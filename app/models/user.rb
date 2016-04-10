@@ -16,13 +16,12 @@ class User < ActiveRecord::Base
   # validation
   with_options unless: proc { [:oauth_registration].include?(validation_context) } do |user|
     user.validates :account,  presence: true
-    user.validates :password, presence: true
   end
 
   validates :account,  uniqueness: true, length: {maximum: 30}
   validates :username, length: {maximum: 30}
   validates :email, uniqueness: true, allow_nil: true, length: {maximum: 256}, format: { with: VALID_EMAIL_REGEX, allow_blank: true }
-  validates :password, length: {minimum: 7, maximum: 20, allow_blank: true}, on: [:create, :reset_password]
+  validates :password, presence: true, length: {minimum: 7, maximum: 20, allow_blank: true}, on: [:create, :reset_password]
   validates :role, numericality: { only_integer: true }
 
   before_create :hash_password
