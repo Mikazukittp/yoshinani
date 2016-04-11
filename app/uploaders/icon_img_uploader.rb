@@ -14,6 +14,6 @@ class IconImgUploader < CarrierWave::Uploader::Base
   end
 
   def filename
-    'user_icon.jpg'
+    'user_icon.jpg' if original_filename.present?
   end
 end
