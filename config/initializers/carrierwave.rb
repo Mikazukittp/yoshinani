@@ -1,4 +1,3 @@
-# if 5 == 5
 # if Rails.env.production?
   CarrierWave.configure do |config|
     config.storage = :fog
