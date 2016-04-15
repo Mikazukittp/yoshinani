@@ -1,4 +1,4 @@
-# if Rails.env.production?
+unless Rails.env.test?
   CarrierWave.configure do |config|
     config.storage = :fog
     config.fog_credentials = {
@@ -11,18 +11,16 @@
     case Rails.env
     when 'production'
         config.fog_directory  = 'yoshinani'
-    when 'staging'
+    when 'dev'
         config.fog_directory  = 'yoshinani-dev'
     when 'development'
         config.fog_directory  = 'yoshinani-development'
-    when 'test'
-        config.fog_directory  = 'yoshinani-test'
     end
 
     config.fog_public = true
   end
-# else
-#   CarrierWave.configure do |config|
-#     config.storage = :file
-#   end
-# end
+else
+  CarrierWave.configure do |config|
+    config.storage = :file
+  end
+end
