@@ -28,8 +28,6 @@ class Api::IconImgsController < ApplicationController
   private
 
   def deny_action_to_another_user
-    p @user.id
-    p params['user_id']
     unless @user.id == params['user_id'].to_i
       render json: {message: "許可されていない操作です"}, status: :bad_request
       return
