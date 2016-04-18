@@ -85,11 +85,65 @@ RSpec.describe 'OauthRegistration', type: :request do
 
     describe '新規に登録する場合' do
       context '正常系' do
+        context '画像が取得できなかった場合' do
+          let(:params) {{
+            oauth_registration: {
+              third_party_id: "22222",
+              oauth_id: oauth.id,
+              sns_hash_id: Digest::MD5.hexdigest("22222" + ENV["YOSHINANI_SALT"])
+            }
+          }}
+
+          before do
+            post api_oauth_registrations_path, params
+            @json = JSON.parse(response.body)
+          end
+
+          example '201が返ってくること' do
+            expect(response).to be_success
+            expect(response.status).to eq 201
+          end
+
+          example '期待したデータが取得されていること' do
+            expect(@json).not_to be_empty
+            expect(@json['account']).to be_nil
+          end
+        end
+
+        context '画像が取得できた場合' do
+          let(:params) {{
+            oauth_registration: {
+              third_party_id: "22222",
+              oauth_id: oauth.id,
+              sns_hash_id: Digest::MD5.hexdigest("22222" + ENV["YOSHINANI_SALT"]),
+              icon_img: "https://s3-ap-northeast-1.amazonaws.com/yoshinani/uploads/user/icon_img/3/Ruby_3_0.jpg"
+            }
+          }}
+
+          before do
+            post api_oauth_registrations_path, params
+            @json = JSON.parse(response.body)
+          end
+
+          example '201が返ってくること' do
+            expect(response).to be_success
+            expect(response.status).to eq 201
+          end
+
+          example '期待したデータが取得されていること' do
+            expect(@json).not_to be_empty
+            expect(@json['icon_img']['url']).not_to be_nil
+          end
+        end
+      end
+
+      context '画像のURLが存在しない場合' do
         let(:params) {{
           oauth_registration: {
             third_party_id: "22222",
             oauth_id: oauth.id,
-            sns_hash_id: Digest::MD5.hexdigest("22222" + ENV["YOSHINANI_SALT"])
+            sns_hash_id: Digest::MD5.hexdigest("22222" + ENV["YOSHINANI_SALT"]),
+            icon_img: "http://example.com/example.jpg"
           }
         }}
 
@@ -106,6 +160,7 @@ RSpec.describe 'OauthRegistration', type: :request do
         example '期待したデータが取得されていること' do
           expect(@json).not_to be_empty
           expect(@json['account']).to be_nil
+          expect(@json['icon_img']['url']).to be_nil
         end
       end
 
