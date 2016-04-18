@@ -1,6 +1,12 @@
 class Api::OauthRegistrationsController < ApplicationController
-  before_action :deny_unpermitted_third_party
-  before_action :validate_hash_token!
+  before_action :authenticate!, only: %i(index add destroy)
+  before_action :deny_unpermitted_third_party, only: %i(create add)
+  before_action :validate_hash_token!, only: %i(create add)
+  before_action :set_oauth_registration, only: %i(destroy)
+
+  def index
+    render json: @user.oauth_registrations, status: :ok
+  end
 
   def create
     if exist_auth_registration?
@@ -31,6 +37,26 @@ class Api::OauthRegistrationsController < ApplicationController
     render json: user, status: status
   end
 
+  def add
+    if @user.oauth_registrations.create(oauth_params)
+      render json: @user.oauth_registrations, status: :ok
+    else
+      render json: {message: "Oauth情報の登録に失敗しました", errors: @user.oauth_registrations.messages}, status: :internal_server_error
+    end
+  end
+
+  def destroy
+    if @user.password.blank? && @user.oauth_registrations.count <= 1
+      render json: {message: "最低でも登録情報は一つ以上必要です"}, status: :bad_request
+    end
+
+    if @oauth_registration.destroy
+      render json: @user.oauth_registrations, status: :ok
+    else
+      render json: {message: "Oauth情報の削除に失敗しました", errors: @user.errors.messages}, status: :internal_server_error
+    end
+  end
+
   private
 
   def oauth_params
@@ -43,6 +69,10 @@ class Api::OauthRegistrationsController < ApplicationController
   rescue OpenURI::HTTPError => e
     Rails.logger.error "upload file failed #{e.try!(:message)}"
     return nil
+  end
+  
+  def set_oauth_registration
+    @oauth_registration = @user.oauth_registrations.find_by(oauth_id: params[:oauth_registration][:oauth_id])
   end
 
   def exist_auth_registration?
