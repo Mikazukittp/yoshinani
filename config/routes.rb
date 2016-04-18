@@ -30,7 +30,12 @@ Rails.application.routes.draw do
           patch :reset
         end
       end
-      resources :oauth_registrations, only: %i(create)
+      resources :oauth_registrations, only: %i(index create) do
+        collection do
+          post :add
+          delete :destroy
+        end
+      end
       resource :notification_tokens, only: %i(create update destroy)
     end
   end
