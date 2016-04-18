@@ -13,6 +13,8 @@ Rails.application.routes.draw do
         member do
           delete :sign_out
         end
+
+        resource :icon_imgs, only: %i(create update destroy)
       end
       resources :groups do
         resources :users, controller: 'group_users', only: %i(index create destroy) do
@@ -28,7 +30,12 @@ Rails.application.routes.draw do
           patch :reset
         end
       end
-      resources :oauth_registrations, only: %i(create)
+      resources :oauth_registrations, only: %i(index create) do
+        collection do
+          post :add
+          delete :destroy
+        end
+      end
       resource :notification_tokens, only: %i(create update destroy)
     end
   end
