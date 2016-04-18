@@ -34,6 +34,19 @@ step ':name のOAuth経由で認証を行う' do |name|
   @user = JSON.parse(response.body)
 end
 
+step ':name でSNS連携を追加する' do |name|
+  oauth = Oauth.find_by(name: name)
+  params = {
+            oauth_registration: {
+              third_party_id: "1234",
+              oauth_id: oauth.id,
+              sns_hash_id: Digest::MD5.hexdigest("1234" + ENV["YOSHINANI_SALT"])
+            }
+          }
+
+  post add_api_oauth_registrations_path, params, { UID: @user['id'], TOKEN: @user['token'] }
+end
+
 step ':name のOAuth経由でログインできること' do |name|
   oauth = Oauth.find_by(name: name)
   params = {

@@ -28,3 +28,18 @@
     かつ 'Facebook' のOAuth経由で認証を行う
 
     ならば 'Facebook' のOAuth経由でログインできること
+
+    シナリオ: 既存ユーザのSNSアカウントの紐づけを行う
+      前提 次のSNSが登録されている:
+        | SNS名            |
+        | Facebook         |
+
+      かつ 次のユーザーが登録されている:
+        | アカウント | パスワード    | ユーザネーム | メールアドレス  |
+        | hogehoge   | password12345 | fugafuga     | ex1@example.com |
+
+      かつ ユーザー 'hogehoge' パスワード 'password12345' としてログインする
+
+      かつ 'Facebook' でSNS連携を追加する
+
+      ならば 'Facebook' のOAuth経由でログインできること
