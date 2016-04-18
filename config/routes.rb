@@ -13,6 +13,8 @@ Rails.application.routes.draw do
         member do
           delete :sign_out
         end
+
+        resource :icon_imgs, only: %i(create update destroy)
       end
       resources :groups do
         resources :users, controller: 'group_users', only: %i(index create destroy) do

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160319054754) do
+ActiveRecord::Schema.define(version: 20160409061734) do
 
   create_table "admin_users", force: true do |t|
     t.string   "email",               default: "", null: false
@@ -123,6 +123,7 @@ ActiveRecord::Schema.define(version: 20160319054754) do
     t.string   "salt"
     t.text     "reset_password_token"
     t.datetime "reset_password_at"
+    t.text     "icon_img"
   end
 
 end

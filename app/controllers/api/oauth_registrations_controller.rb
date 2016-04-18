@@ -17,13 +17,14 @@ class Api::OauthRegistrationsController < ApplicationController
       begin
         ActiveRecord::Base.transaction do
           user = User.new
+          user.icon_img = upload_file if params[:oauth_registration][:icon_img].present?
           user.save!(context: :oauth_registration)
           user.oauth_registrations.create!(oauth_params)
         end
         status = :created
 
       rescue ActiveRecord::RecordInvalid => invalid
-        render json: {message: "会員登録に失敗しました", errors: invalid.record.errors.messages}, status: :internal_server_error
+        render json: {message: "会員登録に失敗しました", errors: invalid.record.errors.messages}, status: :internal_server_error and return
       end
     end
 
@@ -34,6 +35,14 @@ class Api::OauthRegistrationsController < ApplicationController
 
   def oauth_params
     params.require(:oauth_registration).permit(:third_party_id, :oauth_id)
+  end
+
+  def upload_file
+    file = open(params[:oauth_registration][:icon_img])
+    ActionDispatch::Http::UploadedFile.new({filename: 'user_icon.jpg', headers: '', tempfile: file, type: file.content_type})
+  rescue OpenURI::HTTPError => e
+    Rails.logger.error "upload file failed #{e.try!(:message)}"
+    return nil
   end
 
   def exist_auth_registration?
