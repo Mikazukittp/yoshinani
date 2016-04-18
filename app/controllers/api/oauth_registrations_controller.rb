@@ -38,10 +38,13 @@ class Api::OauthRegistrationsController < ApplicationController
   end
 
   def add
-    if @user.oauth_registrations.create(oauth_params)
+    set_user_icon_img if params[:oauth_registration][:icon_img].present? && @user.icon_img.url.blank?
+    oauth_registration = @user.oauth_registrations.new(oauth_params)
+
+    if oauth_registration.save
       render json: @user.oauth_registrations, status: :ok
     else
-      render json: {message: "Oauth情報の登録に失敗しました", errors: @user.oauth_registrations.messages}, status: :internal_server_error
+      render json: {message: "Oauth情報の登録に失敗しました", errors: oauth_registration.errors.messages}, status: :internal_server_error
     end
   end
 
@@ -70,7 +73,15 @@ class Api::OauthRegistrationsController < ApplicationController
     Rails.logger.error "upload file failed #{e.try!(:message)}"
     return nil
   end
-  
+
+  def set_user_icon_img
+    target_file = upload_file
+    @user.icon_img = target_file
+    @user.save!(context: :oauth_registration)
+  rescue ActiveRecord::RecordInvalid => invalid
+    Rails.logger.error "saving icon img failed #{invalid.try!(:message)}"
+  end
+
   def set_oauth_registration
     @oauth_registration = @user.oauth_registrations.find_by(oauth_id: params[:oauth_registration][:oauth_id])
   end
