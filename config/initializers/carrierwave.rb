@@ -6,9 +6,9 @@ unless Rails.env.test?
     config.storage = :fog
     config.fog_credentials = {
         :provider              => 'AWS',
-        :aws_access_key_id     => 'AKIAIXRZP6RFK4QVAEWA',
-        :aws_secret_access_key => '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',
-        :region                => 'ap-northeast-1',
+        :aws_access_key_id     => ENV['AWS_S3_ACCESS_KEY_ID'],
+        :aws_secret_access_key => ENV['AWS_S3_SECRET_ACCESS_KEY'],
+        :region                => ENV['AWS_REGION'],
     }
 
     case Rails.env
