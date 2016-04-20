@@ -1,3 +1,6 @@
+require 'dotenv'
+Dotenv.load
+
 unless Rails.env.test?
   CarrierWave.configure do |config|
     config.storage = :fog
