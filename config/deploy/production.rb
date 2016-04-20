@@ -10,6 +10,9 @@ server '52.69.32.124', user: 'ec2-user', roles: %w{app db web},  ssh_options: {
   port: 45621
 }
 
+set :stage, :production
+set :rbenv_prefix, "source /etc/profile.d/env_vars.sh && RAILS_ENV=#{fetch(:stage)} ~/.rbenv/bin/rbenv exec"
+
 # server 'example.com', user: 'deploy', roles: %w{app web}, other_property: :other_value
 # server 'db.example.com', user: 'deploy', roles: %w{db}
 
